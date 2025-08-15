@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="falling-sand:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/falling_sand_jar</output-path>
+    <root id="archive" name="falling-sand.jar">
+      <element id="module-output" name="falling-sand" />
+    </root>
+  </artifact>
+</component>

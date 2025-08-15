@@ -7,8 +7,8 @@ public class Constants {
 
     public static final double FRAMES_PER_SECOND = 120;
 
-    public static final double SCREEN_WIDTH = 600;
-    public static final double SCREEN_HEIGHT = 800;
+    public static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    public static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
     public static final int SAND = 1;
     public static final int WATER = 2;
