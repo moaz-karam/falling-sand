@@ -56,4 +56,7 @@ public class Panel extends JPanel {
     public void selectWater() {
         ph.selectWater();
     }
+    public void selectWood() {
+        ph.selectWood();
+    }
 }

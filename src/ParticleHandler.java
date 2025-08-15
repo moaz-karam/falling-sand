@@ -67,7 +67,9 @@ public class ParticleHandler {
     public void selectWater() {
         selectedType = Constants.WATER;
     }
-
+    public void selectWood() {
+        selectedType = Constants.WOOD;
+    }
     private void insert() {
         int xIndex = (int)(Math.floor(currentX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(currentY / Constants.PARTICLE_HEIGHT));
@@ -83,8 +85,32 @@ public class ParticleHandler {
         }
     }
 
-    private void updateSand(Particle p) {
+    private int getBottomType(Particle p) {
+        /*
+        returns the type of the particle under the passed particle
+        if it is null it returns 0
+        * */
 
+        int pX = p.getX();
+        int pY = p.getY();
+        int bottom = pY + 1;
+
+        if (grid[pX][bottom] == null) {
+            return 0;
+        }
+        else if (grid[pX][bottom].getType() == Constants.SAND) {
+            return Constants.SAND;
+        }
+        else if (grid[pX][bottom].getType() == Constants.WATER) {
+            return Constants.WATER;
+        }
+        else if (grid[pX][bottom].getType() == Constants.WOOD) {
+            return Constants.WOOD;
+        }
+
+        return 0;
+    }
+    private void updateSand(Particle p) {
         int pX = p.getX();
         int pY = p.getY();
 
@@ -106,30 +132,39 @@ public class ParticleHandler {
             checkLeft = true;
         }
 
-        if (grid[pX][bottom] == null || grid[pX][bottom].getType() == Constants.WATER) {
+        int bottomType = getBottomType(p);
+
+        if (bottomType != Constants.SAND) {
             Particle tempP = grid[pX][bottom];
+
+            if (bottomType == Constants.WOOD) {
+                return;
+            }
+
             grid[pX][bottom] = p;
             p.setY(bottom);
 
-            if (tempP == null) {
+            if (bottomType == 0) {
                 grid[pX][pY] = tempP;
             }
 
-            else if (checkRight && grid[right][pY] == null) {
-                grid[right][pY] = tempP;
-                tempP.setX(right);
-                tempP.setY(pY);
-                grid[pX][pY] = null;
-            }
-            else if (checkLeft && grid[left][pY] == null) {
-                grid[left][pY] = tempP;
-                tempP.setX(left);
-                tempP.setY(pY);
-                grid[pX][pY] = null;
-            }
-            else {
-                grid[pX][pY] = tempP;
-                tempP.setY(pY);
+            if (bottomType == Constants.WATER) {
+                if (checkRight && grid[right][pY] == null) {
+                    grid[right][pY] = tempP;
+                    tempP.setX(right);
+                    tempP.setY(pY);
+                    grid[pX][pY] = null;
+                }
+                else if (checkLeft && grid[left][pY] == null) {
+                    grid[left][pY] = tempP;
+                    tempP.setX(left);
+                    tempP.setY(pY);
+                    grid[pX][pY] = null;
+                }
+                else {
+                    grid[pX][pY] = tempP;
+                    tempP.setY(pY);
+                }
             }
         }
         else if (checkRight && grid[right][bottom] == null) {
@@ -196,6 +231,7 @@ public class ParticleHandler {
             }
         }
     }
+
     public Iterator<Particle> getParticles() {
         return particles.iterator();
     }

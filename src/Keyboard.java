@@ -23,6 +23,9 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_W:
                 panel.selectWater();
                 break;
+            case KeyEvent.VK_D:
+                panel.selectWood();
+                break;
         }
     }
 
