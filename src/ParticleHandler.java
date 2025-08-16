@@ -8,6 +8,7 @@ public class ParticleHandler {
     private final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
     private final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
     private final Stack<Particle> particles;
+    private final HashSet<Particle> particlesToBeRemoved;
 
     private boolean inserting;
     private double currentX;
@@ -49,6 +50,7 @@ public class ParticleHandler {
     public ParticleHandler() {
         grid = new Particle[xPositions][yPositions];
         particles = new Stack<>();
+        particlesToBeRemoved = new HashSet<>();
         inserting = false;
         selectedType = Constants.SAND;
     }
@@ -70,6 +72,7 @@ public class ParticleHandler {
     public void selectWood() {
         selectedType = Constants.WOOD;
     }
+    public void selectFire(){selectedType = Constants.FIRE;}
     private void insert() {
         int xIndex = (int)(Math.floor(currentX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(currentY / Constants.PARTICLE_HEIGHT));
@@ -82,6 +85,9 @@ public class ParticleHandler {
             Particle insertedParticle = new Particle(xIndex, yIndex, selectedType);
             grid[xIndex][yIndex] = insertedParticle;
             particles.push(insertedParticle);
+        }
+        else if (selectedType == Constants.FIRE && grid[xIndex][yIndex].getType() == Constants.WOOD) {
+            grid[xIndex][yIndex].setType(Constants.FIRE);
         }
     }
 
@@ -249,6 +255,32 @@ public class ParticleHandler {
         }
 
     }
+    private void updateFire(Particle p) {
+        int pX = p.getX();
+        int pY = p.getY();
+
+        int minY = pY - 1;
+        int maxY = pY + 1;
+        int minX  = pX - 1;
+        int maxX = pX + 1;
+
+        if (minY < 0) {
+            minY += 1;
+        }
+        if (minX < 0) {
+            minX += 1;
+        }
+
+        for (int y = minY; y <= maxY && y < yPositions; y += 1) {
+            for (int x = minX; x <= maxX && x < xPositions; x += 1) {
+                if (getType(x, y) == Constants.WOOD) {
+                    grid[x][y].setType(Constants.FIRE);
+                }
+            }
+        }
+
+        particlesToBeRemoved.add(p);
+    }
     public void update() {
         if (inserting) {
             insert();
@@ -262,6 +294,14 @@ public class ParticleHandler {
                 case Constants.WATER:
                     updateWater(p);
                     break;
+                case Constants.FIRE:
+                    updateFire(p);
+                    break;
+            }
+            if (particlesToBeRemoved.contains(p)) {
+                iter.remove();
+                particlesToBeRemoved.remove(p);
+                grid[p.getX()][p.getY()] = null;
             }
         }
     }

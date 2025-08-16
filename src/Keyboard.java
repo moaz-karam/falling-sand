@@ -26,6 +26,9 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_D:
                 panel.selectWood();
                 break;
+            case KeyEvent.VK_F:
+                panel.selectFire();
+                break;
         }
     }
 
