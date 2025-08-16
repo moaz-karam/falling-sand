@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.image.BufferedImage;
 
 public class Frame extends JFrame {
 
@@ -34,5 +35,10 @@ public class Frame extends JFrame {
             System.out.println("Full-screen exclusive mode not supported on this device.");
             setVisible(true); // Show in windowed mode if full-screen is not supported
         }
+
+        BufferedImage cursorImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(
+                cursorImage, new Point(0, 0), "blank cursor");
+        getContentPane().setCursor(cursor);
     }
 }

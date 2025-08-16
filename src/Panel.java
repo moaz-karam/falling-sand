@@ -9,7 +9,6 @@ public class Panel extends JPanel {
     private final Mouse mouse;
     private final Keyboard keyboard;
 
-
     public Panel() {
         ph = new ParticleHandler();
         mouse = new Mouse(this);
@@ -38,12 +37,17 @@ public class Panel extends JPanel {
             g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
                     (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
         }
+        g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
+        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
     }
 
     public void update() {
         ph.update();
     }
 
+    public void setMousePosition(double x, double y) {
+        ph.setMousePosition(x, y);
+    }
     public void startInserting(double x, double y) {
         ph.startInserting(x, y);
     }

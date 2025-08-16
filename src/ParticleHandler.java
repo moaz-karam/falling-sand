@@ -16,6 +16,9 @@ public class ParticleHandler {
 
     private int selectedType;
 
+    private double mouseX;
+    private double mouseY;
+
     class Particle {
         int x;
         int y;
@@ -91,6 +94,18 @@ public class ParticleHandler {
     }
     public void selectFire() {selectedType = Constants.FIRE;}
     public void selectRemove() {selectedType = Constants.REMOVE;}
+    public void setMousePosition(double x, double y) {
+        mouseX = x;
+        mouseY = y;
+    }
+    public int getMouseX() {
+        int x = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
+        return (int) (x * Constants.PARTICLE_WIDTH);
+    }
+    public int getMouseY() {
+        int y = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+        return (int)(y * Constants.PARTICLE_HEIGHT);
+    }
     private void insert() {
         int xIndex = (int)(Math.floor(currentX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(currentY / Constants.PARTICLE_HEIGHT));
@@ -115,11 +130,6 @@ public class ParticleHandler {
     }
 
     private int getType(int xIndex, int yIndex) {
-        /*
-        returns the type of the particle under the passed particle
-        if it is null it returns 0
-        * */
-
         if (grid[xIndex][yIndex] == null) {
             return 0;
         }
