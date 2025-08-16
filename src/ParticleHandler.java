@@ -26,7 +26,7 @@ public class ParticleHandler {
         int previousType;
         long typeUpdateTime;
 
-        static final double UPDATE_FIRE_TIME = 0.25;
+        static final double UPDATE_FIRE_TIME = 0.5;
 
         public Particle(int x1, int y1, int t) {
             x = x1;
@@ -288,9 +288,7 @@ public class ParticleHandler {
 
         long now = System.nanoTime();
 
-        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 < Particle.UPDATE_FIRE_TIME) {
-            return;
-        }
+
 
         int pX = p.getX();
         int pY = p.getY();
@@ -318,21 +316,25 @@ public class ParticleHandler {
                         p.setType(p.getPreviousType());
                         p.setTypeUpdateTime(0);
                     }
-
                     return;
                 }
             }
         }
 
-        for (int y = minY; y <= maxY && y < yPositions; y += 1) {
-            for (int x = minX; x <= maxX && x < xPositions; x += 1) {
-                if (getType(x, y) == Constants.WOOD) {
-                    grid[x][y].setType(Constants.FIRE);
+        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 >= Particle.UPDATE_FIRE_TIME / 4) {
+            for (int y = minY; y <= maxY && y < yPositions; y += 1) {
+                for (int x = minX; x <= maxX && x < xPositions; x += 1) {
+                    if (getType(x, y) == Constants.WOOD) {
+                        grid[x][y].setType(Constants.FIRE);
+                    }
                 }
             }
         }
 
-        particlesToBeRemoved.add(p);
+
+        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 >= Particle.UPDATE_FIRE_TIME) {
+            particlesToBeRemoved.add(p);
+        }
     }
     public void update() {
         if (inserting) {

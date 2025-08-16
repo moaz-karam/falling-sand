@@ -5,7 +5,7 @@ public class Constants {
     public static final double PARTICLE_WIDTH = 15;
     public static final double PARTICLE_HEIGHT = 15;
 
-    public static final double FRAMES_PER_SECOND = 80;
+    public static final double FRAMES_PER_SECOND = 120;
 
     public static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
