@@ -2,8 +2,8 @@ import java.awt.*;
 
 public class Constants {
 
-    public static final double PARTICLE_WIDTH = 30;
-    public static final double PARTICLE_HEIGHT = 30;
+    public static final double PARTICLE_WIDTH = 15;
+    public static final double PARTICLE_HEIGHT = 15;
 
     public static final double FRAMES_PER_SECOND = 80;
 

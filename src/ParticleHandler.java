@@ -20,11 +20,17 @@ public class ParticleHandler {
         int x;
         int y;
         int type;
+        int previousType;
+        long typeUpdateTime;
+
+        static final double UPDATE_FIRE_TIME = 0.25;
 
         public Particle(int x1, int y1, int t) {
             x = x1;
             y = y1;
             type = t;
+            previousType = 0;
+            typeUpdateTime = 0;
         }
         public int getX() {
             return x;
@@ -43,7 +49,18 @@ public class ParticleHandler {
             y = y1;
         }
         public void setType(int t) {
+            typeUpdateTime = System.nanoTime();
+            previousType = type;
             type = t;
+        }
+        public int getPreviousType() {
+            return previousType;
+        }
+        public long getTypeUpdateTime() {
+            return typeUpdateTime;
+        }
+        public void setTypeUpdateTime(long i) {
+            typeUpdateTime = i;
         }
     }
 
@@ -100,17 +117,15 @@ public class ParticleHandler {
         if (grid[xIndex][yIndex] == null) {
             return 0;
         }
-        else if (grid[xIndex][yIndex].getType() == Constants.SAND) {
-            return Constants.SAND;
+        return grid[xIndex][yIndex].getType();
+    }
+    private boolean strongerThanSand(int type) {
+        switch (type) {
+            case Constants.WOOD, Constants.FIRE, Constants.SAND:
+                return true;
+            default:
+                return false;
         }
-        else if (grid[xIndex][yIndex].getType() == Constants.WATER) {
-            return Constants.WATER;
-        }
-        else if (grid[xIndex][yIndex].getType() == Constants.WOOD) {
-            return Constants.WOOD;
-        }
-
-        return 0;
     }
     private void updateSand(Particle p) {
         int pX = p.getX();
@@ -123,7 +138,6 @@ public class ParticleHandler {
         boolean checkRight = false;
         boolean checkLeft = false;
 
-        int bottomType = -1;
         int bottomRightType = -1;
         int bottomLeftType = -1;
 
@@ -139,12 +153,12 @@ public class ParticleHandler {
             bottomLeftType = getType(left, bottom);
         }
 
-        bottomType = getType(pX, bottom);
+        int bottomType = getType(pX, bottom);
 
         if (bottomType != Constants.SAND) {
             Particle tempP = grid[pX][bottom];
 
-            if (bottomType == Constants.WOOD) {
+            if (strongerThanSand(bottomType)) {
                 return;
             }
 
@@ -174,9 +188,8 @@ public class ParticleHandler {
                 }
             }
         }
-        else if (checkRight && bottomRightType != Constants.SAND && bottomRightType != Constants.WOOD) {
+        else if (checkRight && !strongerThanSand(bottomRightType)) {
             Particle tempParticle = grid[right][bottom];
-
 
             switch (bottomRightType) {
                 case 0:
@@ -199,7 +212,7 @@ public class ParticleHandler {
             p.setX(right);
             p.setY(bottom);
         }
-        else if (checkLeft && bottomLeftType != Constants.SAND && bottomLeftType != Constants.WOOD) {
+        else if (checkLeft && !strongerThanSand(bottomLeftType)) {
             Particle tempParticle = grid[left][bottom];
 
             switch(bottomLeftType) {
@@ -256,6 +269,13 @@ public class ParticleHandler {
 
     }
     private void updateFire(Particle p) {
+
+        long now = System.nanoTime();
+
+        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 < Particle.UPDATE_FIRE_TIME) {
+            return;
+        }
+
         int pX = p.getX();
         int pY = p.getY();
 
@@ -269,6 +289,23 @@ public class ParticleHandler {
         }
         if (minX < 0) {
             minX += 1;
+        }
+
+        for (int y = minY; y <= maxY && y < yPositions; y += 1) {
+            for (int x = minX; x <= maxX && x < xPositions; x += 1) {
+                if (getType(x, y) == Constants.WATER) {
+
+                    if (p.getPreviousType() == 0) {
+                        particlesToBeRemoved.add(p);
+                    }
+                    else {
+                        p.setType(p.getPreviousType());
+                        p.setTypeUpdateTime(0);
+                    }
+
+                    return;
+                }
+            }
         }
 
         for (int y = minY; y <= maxY && y < yPositions; y += 1) {
@@ -287,6 +324,12 @@ public class ParticleHandler {
         }
         for (Iterator<Particle> iter = getParticles(); iter.hasNext();) {
             Particle p = iter.next();
+            if (particlesToBeRemoved.contains(p)) {
+                iter.remove();
+                particlesToBeRemoved.remove(p);
+                grid[p.getX()][p.getY()] = null;
+                continue;
+            }
             switch (p.getType()) {
                 case Constants.SAND:
                     updateSand(p);
@@ -298,11 +341,7 @@ public class ParticleHandler {
                     updateFire(p);
                     break;
             }
-            if (particlesToBeRemoved.contains(p)) {
-                iter.remove();
-                particlesToBeRemoved.remove(p);
-                grid[p.getX()][p.getY()] = null;
-            }
+
         }
     }
 
