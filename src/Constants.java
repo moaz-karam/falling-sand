@@ -14,11 +14,13 @@ public class Constants {
     public static final int WATER = 2;
     public static final int WOOD = 3;
     public static final int FIRE = 4;
+    public static final int REMOVE = 5;
 
     public static final Color[] TYPE_COLOR =
             {Color.black,
             Color.yellow,
             Color.cyan,
             new Color(150, 111, 51),
-            new Color(255, 64, 0)};
+            new Color(255, 64, 0),
+            Color.white};
 }

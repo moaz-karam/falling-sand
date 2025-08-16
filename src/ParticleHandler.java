@@ -89,7 +89,8 @@ public class ParticleHandler {
     public void selectWood() {
         selectedType = Constants.WOOD;
     }
-    public void selectFire(){selectedType = Constants.FIRE;}
+    public void selectFire() {selectedType = Constants.FIRE;}
+    public void selectRemove() {selectedType = Constants.REMOVE;}
     private void insert() {
         int xIndex = (int)(Math.floor(currentX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(currentY / Constants.PARTICLE_HEIGHT));
@@ -98,7 +99,12 @@ public class ParticleHandler {
             return;
         }
 
-        if (grid[xIndex][yIndex] == null) {
+        if (selectedType == Constants.REMOVE) {
+            if (grid[xIndex][yIndex] != null) {
+                particlesToBeRemoved.add(grid[xIndex][yIndex]);
+            }
+        }
+        else if (grid[xIndex][yIndex] == null) {
             Particle insertedParticle = new Particle(xIndex, yIndex, selectedType);
             grid[xIndex][yIndex] = insertedParticle;
             particles.push(insertedParticle);

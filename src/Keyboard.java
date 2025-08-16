@@ -29,6 +29,9 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_F:
                 panel.selectFire();
                 break;
+            case KeyEvent.VK_R:
+                panel.selectRemove();
+                break;
         }
     }
 

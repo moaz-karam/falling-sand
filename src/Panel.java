@@ -59,5 +59,6 @@ public class Panel extends JPanel {
     public void selectWood() {
         ph.selectWood();
     }
-    public void selectFire(){ph.selectFire();}
+    public void selectFire() {ph.selectFire();}
+    public void selectRemove() {ph.selectRemove();}
 }
