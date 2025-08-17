@@ -11,8 +11,6 @@ public class ParticleHandler {
     private final HashSet<Particle> particlesToBeRemoved;
 
     private boolean inserting;
-    private double currentX;
-    private double currentY;
 
     private int selectedType;
 
@@ -75,9 +73,7 @@ public class ParticleHandler {
         selectedType = Constants.SAND;
     }
 
-    public void startInserting(double x, double y) {
-        currentX = x;
-        currentY = y;
+    public void startInserting() {
         inserting = true;
     }
     public void stopInserting() {
@@ -107,25 +103,32 @@ public class ParticleHandler {
         return (int)(y * Constants.PARTICLE_HEIGHT);
     }
     private void insert() {
-        int xIndex = (int)(Math.floor(currentX / Constants.PARTICLE_WIDTH));
-        int yIndex = (int)(Math.floor(currentY / Constants.PARTICLE_HEIGHT));
+
+
+        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
+        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+
 
         if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
             return;
         }
 
-        if (selectedType == Constants.REMOVE) {
-            if (grid[xIndex][yIndex] != null) {
-                particlesToBeRemoved.add(grid[xIndex][yIndex]);
+        for (int y = yIndex; y <= yIndex + 3 && y < yPositions; y += 1) {
+            for (int x = xIndex; x <= xIndex + 3 && x < xPositions; x += 1) {
+                if (selectedType == Constants.REMOVE) {
+                    if (grid[x][y] != null) {
+                        particlesToBeRemoved.add(grid[x][y]);
+                    }
+                }
+                else if (grid[x][y] == null) {
+                    Particle insertedParticle = new Particle(x, y, selectedType);
+                    grid[x][y] = insertedParticle;
+                    particles.push(insertedParticle);
+                }
+                else if (selectedType == Constants.FIRE && grid[x][y].getType() == Constants.WOOD) {
+                    grid[x][y].setType(Constants.FIRE);
+                }
             }
-        }
-        else if (grid[xIndex][yIndex] == null) {
-            Particle insertedParticle = new Particle(xIndex, yIndex, selectedType);
-            grid[xIndex][yIndex] = insertedParticle;
-            particles.push(insertedParticle);
-        }
-        else if (selectedType == Constants.FIRE && grid[xIndex][yIndex].getType() == Constants.WOOD) {
-            grid[xIndex][yIndex].setType(Constants.FIRE);
         }
     }
 

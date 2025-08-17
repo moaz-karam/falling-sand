@@ -15,7 +15,7 @@ public class Mouse implements MouseMotionListener, MouseListener {
     }
     public void mousePressed(MouseEvent e) {
         panel.setMousePosition(e.getX(), e.getY());
-        panel.startInserting(e.getX(), e.getY());
+        panel.startInserting();
     }
     public void mouseReleased(MouseEvent e) {
         panel.setMousePosition(e.getX(), e.getY());
@@ -30,7 +30,7 @@ public class Mouse implements MouseMotionListener, MouseListener {
     }
     public void mouseDragged(MouseEvent e) {
         panel.setMousePosition(e.getX(), e.getY());
-        panel.startInserting(e.getX(), e.getY());
+        panel.startInserting();
     }
 
     public void mouseMoved(MouseEvent e) {

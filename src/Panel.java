@@ -38,7 +38,7 @@ public class Panel extends JPanel {
                     (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
         }
         g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
-        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.MOUSE_WIDTH, (int)Constants.MOUSE_HEIGHT);
     }
 
     public void update() {
@@ -48,8 +48,8 @@ public class Panel extends JPanel {
     public void setMousePosition(double x, double y) {
         ph.setMousePosition(x, y);
     }
-    public void startInserting(double x, double y) {
-        ph.startInserting(x, y);
+    public void startInserting() {
+        ph.startInserting();
     }
     public void stopInserting() {
         ph.stopInserting();
