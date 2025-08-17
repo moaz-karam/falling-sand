@@ -28,17 +28,17 @@ public class Panel extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
-        for (Iterator<ParticleHandler.Particle> iter = ph.getParticles(); iter.hasNext();) {
+        for (Iterator<Particle> iter = ph.getParticles(); iter.hasNext();) {
 
-            ParticleHandler.Particle p = iter.next();
+            Particle p = iter.next();
 
-            g.setColor(Constants.TYPE_COLOR[p.getType()]);
+            g.setColor(p.getColor());
 
             g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
                     (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
         }
         g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
-        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.MOUSE_WIDTH, (int)Constants.MOUSE_HEIGHT);
+        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
     }
 
     public void update() {

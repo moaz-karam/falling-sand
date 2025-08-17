@@ -4,11 +4,11 @@ import java.util.Stack;
 
 public class ParticleHandler {
 
-    private final Particle[][] grid;
-    private final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
-    private final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
+    public static final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
+    public static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
+    private static final Particle[][] grid = new Particle[xPositions][yPositions];
     private final Stack<Particle> particles;
-    private final HashSet<Particle> particlesToBeRemoved;
+    private static final HashSet<Particle> particlesToBeRemoved = new HashSet<>();
 
     private boolean inserting;
 
@@ -17,58 +17,8 @@ public class ParticleHandler {
     private double mouseX;
     private double mouseY;
 
-    class Particle {
-        int x;
-        int y;
-        int type;
-        int previousType;
-        long typeUpdateTime;
-
-        static final double UPDATE_FIRE_TIME = 0.5;
-
-        public Particle(int x1, int y1, int t) {
-            x = x1;
-            y = y1;
-            type = t;
-            previousType = 0;
-            typeUpdateTime = 0;
-        }
-        public int getX() {
-            return x;
-        }
-        public int getY() {
-            return y;
-        }
-        public int getType() {
-            return type;
-        }
-
-        public void setX(int x1) {
-            x = x1;
-        }
-        public void setY(int y1) {
-            y = y1;
-        }
-        public void setType(int t) {
-            typeUpdateTime = System.nanoTime();
-            previousType = type;
-            type = t;
-        }
-        public int getPreviousType() {
-            return previousType;
-        }
-        public long getTypeUpdateTime() {
-            return typeUpdateTime;
-        }
-        public void setTypeUpdateTime(long i) {
-            typeUpdateTime = i;
-        }
-    }
-
     public ParticleHandler() {
-        grid = new Particle[xPositions][yPositions];
         particles = new Stack<>();
-        particlesToBeRemoved = new HashSet<>();
         inserting = false;
         selectedType = Constants.SAND;
     }
@@ -102,6 +52,20 @@ public class ParticleHandler {
         int y = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
         return (int)(y * Constants.PARTICLE_HEIGHT);
     }
+    public static void remove(Particle p) {
+        particlesToBeRemoved.add(p);
+    }
+    private Particle createParticle(int x, int y) {
+        switch (selectedType) {
+            case Constants.SAND:
+                return new Sand(x, y);
+            case Constants.WATER:
+                return new Water(x, y);
+            case Constants.WOOD:
+                return new Wood(x, y);
+        }
+        return null;
+    }
     private void insert() {
 
 
@@ -113,235 +77,51 @@ public class ParticleHandler {
             return;
         }
 
-        for (int y = yIndex; y <= yIndex + 3 && y < yPositions; y += 1) {
-            for (int x = xIndex; x <= xIndex + 3 && x < xPositions; x += 1) {
-                if (selectedType == Constants.REMOVE) {
-                    if (grid[x][y] != null) {
-                        particlesToBeRemoved.add(grid[x][y]);
-                    }
-                }
-                else if (grid[x][y] == null) {
-                    Particle insertedParticle = new Particle(x, y, selectedType);
-                    grid[x][y] = insertedParticle;
-                    particles.push(insertedParticle);
-                }
-                else if (selectedType == Constants.FIRE && grid[x][y].getType() == Constants.WOOD) {
-                    grid[x][y].setType(Constants.FIRE);
-                }
+
+        if (selectedType == Constants.REMOVE) {
+            if (grid[xIndex][yIndex] != null) {
+                remove(grid[xIndex][yIndex]);
             }
         }
-    }
 
-    private int getType(int xIndex, int yIndex) {
+        else if (selectedType == Constants.FIRE) {
+            if (getType(xIndex, yIndex) == Constants.WOOD) {
+                grid[xIndex][yIndex].setOnFire();
+            }
+        }
+        else if (grid[xIndex][yIndex] == null) {
+            Particle insertedParticle = createParticle(xIndex, yIndex);
+            grid[xIndex][yIndex] = insertedParticle;
+            particles.push(insertedParticle);
+        }
+    }
+    public static int getType(int xIndex, int yIndex) {
         if (grid[xIndex][yIndex] == null) {
             return 0;
         }
         return grid[xIndex][yIndex].getType();
     }
-    private boolean strongerThanSand(int type) {
-        switch (type) {
-            case Constants.WOOD, Constants.FIRE, Constants.SAND:
-                return true;
-            default:
-                return false;
-        }
+    public static Particle getParticle(int xIndex, int yIndex) {
+        return grid[xIndex][yIndex];
     }
-    private void updateSand(Particle p) {
-        int pX = p.getX();
-        int pY = p.getY();
-
-        int bottom = pY + 1;
-        int right = pX + 1;
-        int left = pX - 1;
-
-        boolean checkRight = false;
-        boolean checkLeft = false;
-
-        int bottomRightType = -1;
-        int bottomLeftType = -1;
-
-        if (bottom >= yPositions) {
-            return;
-        }
-        if (right < xPositions) {
-            checkRight = true;
-            bottomRightType = getType(right, bottom);
-        }
-        if (left >= 0) {
-            checkLeft = true;
-            bottomLeftType = getType(left, bottom);
-        }
-
-        int bottomType = getType(pX, bottom);
-
-        if (bottomType != Constants.SAND) {
-            Particle tempP = grid[pX][bottom];
-
-            if (strongerThanSand(bottomType)) {
-                return;
-            }
-
-            grid[pX][bottom] = p;
-            p.setY(bottom);
-
-            if (bottomType == 0) {
-                grid[pX][pY] = tempP;
-            }
-
-            if (bottomType == Constants.WATER) {
-                if (checkRight && getType(right, pY) == 0) {
-                    grid[right][pY] = tempP;
-                    tempP.setX(right);
-                    tempP.setY(pY);
-                    grid[pX][pY] = null;
-                }
-                else if (checkLeft && getType(left, pY) == 0) {
-                    grid[left][pY] = tempP;
-                    tempP.setX(left);
-                    tempP.setY(pY);
-                    grid[pX][pY] = null;
-                }
-                else {
-                    grid[pX][pY] = tempP;
-                    tempP.setY(pY);
-                }
-            }
-        }
-        else if (checkRight && !strongerThanSand(bottomRightType)) {
-            Particle tempParticle = grid[right][bottom];
-
-            switch (bottomRightType) {
-                case 0:
-                    grid[pX][pY] = null;
-                    break;
-                case Constants.WATER:
-                    if (getType(right, pY) == 0) {
-                        grid[right][pY] = tempParticle;
-                        tempParticle.setY(pY);
-                        grid[pX][pY] = null;
-                    }
-                    else {
-                        grid[pX][pY] = tempParticle;
-                        tempParticle.setX(pX);
-                        tempParticle.setY(pY);
-                    }
-                    break;
-            }
-            grid[right][bottom] = p;
-            p.setX(right);
-            p.setY(bottom);
-        }
-        else if (checkLeft && !strongerThanSand(bottomLeftType)) {
-            Particle tempParticle = grid[left][bottom];
-
-            switch(bottomLeftType) {
-                case 0:
-                    grid[pX][pY] = null;
-                    break;
-                case Constants.WATER:
-                    if (getType(left, pY) == 0) {
-                        grid[left][pY] = tempParticle;
-                        tempParticle.setY(pY);
-                        grid[pX][pY] = null;
-                    }
-                    else {
-                        grid[pX][pY] = tempParticle;
-                        tempParticle.setX(pX);
-                        tempParticle.setY(pY);
-                    }
-                    break;
-            }
-
-            grid[left][bottom] = p;
-            p.setX(left);
-            p.setY(bottom);
-        }
+    public static void setParticle(int x, int y, Particle p) {
+        grid[x][y] = p;
     }
-    private void updateWater(Particle p) {
-        int pX = p.getX();
-        int pY = p.getY();
-
-        int bottom = pY + 1;
-        int[] directions = {pX + 1, pX - 1};
-        int firstDirectionIndex = (int)(System.nanoTime() % 2);
-        int secondDirectionIndex = 1 - firstDirectionIndex;
-
-        int firstDirection = directions[firstDirectionIndex];
-        int secondDirection = directions[secondDirectionIndex];
-
-
-        if (bottom < yPositions && grid[pX][bottom] == null) {
-            grid[pX][bottom] = p;
-            grid[pX][pY] = null;
-            p.setY(bottom);
-        }
-        else if (firstDirection >= 0 && firstDirection < xPositions && grid[firstDirection][pY] == null) {
-            grid[firstDirection][pY] = p;
-            grid[pX][pY] = null;
-            p.setX(firstDirection);
-        }
-        else if (secondDirection >= 0 && secondDirection < xPositions && grid[secondDirection][pY] == null) {
-            grid[secondDirection][pY] = p;
-            grid[pX][pY] = null;
-            p.setX(secondDirection);
-        }
-
+    public static boolean strongerThan(int t1, int t2) {
+        return t1 <= t2;
     }
-    private void updateFire(Particle p) {
 
-        long now = System.nanoTime();
-
-
-
-        int pX = p.getX();
-        int pY = p.getY();
-
-        int minY = pY - 1;
-        int maxY = pY + 1;
-        int minX  = pX - 1;
-        int maxX = pX + 1;
-
-        if (minY < 0) {
-            minY += 1;
-        }
-        if (minX < 0) {
-            minX += 1;
-        }
-
-        for (int y = minY; y <= maxY && y < yPositions; y += 1) {
-            for (int x = minX; x <= maxX && x < xPositions; x += 1) {
-                if (getType(x, y) == Constants.WATER) {
-
-                    if (p.getPreviousType() == 0) {
-                        particlesToBeRemoved.add(p);
-                    }
-                    else {
-                        p.setType(p.getPreviousType());
-                        p.setTypeUpdateTime(0);
-                    }
-                    return;
-                }
-            }
-        }
-
-        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 >= Particle.UPDATE_FIRE_TIME / 4) {
-            for (int y = minY; y <= maxY && y < yPositions; y += 1) {
-                for (int x = minX; x <= maxX && x < xPositions; x += 1) {
-                    if (getType(x, y) == Constants.WOOD) {
-                        grid[x][y].setType(Constants.FIRE);
-                    }
-                }
-            }
-        }
-
-
-        if ((now - p.getTypeUpdateTime()) / 1_000_000_000.0 >= Particle.UPDATE_FIRE_TIME) {
-            particlesToBeRemoved.add(p);
-        }
-    }
     public void update() {
+
         if (inserting) {
             insert();
+        }
+        System.out.println();
+        for (int i = 0; i < yPositions; i += 1) {
+            for (int j = 0; j < xPositions; j += 1) {
+                System.out.print(getType(j, i));
+            }
+            System.out.println();
         }
         for (Iterator<Particle> iter = getParticles(); iter.hasNext();) {
             Particle p = iter.next();
@@ -351,18 +131,7 @@ public class ParticleHandler {
                 grid[p.getX()][p.getY()] = null;
                 continue;
             }
-            switch (p.getType()) {
-                case Constants.SAND:
-                    updateSand(p);
-                    break;
-                case Constants.WATER:
-                    updateWater(p);
-                    break;
-                case Constants.FIRE:
-                    updateFire(p);
-                    break;
-            }
-
+            p.update();
         }
     }
 
