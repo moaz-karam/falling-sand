@@ -116,13 +116,13 @@ public class ParticleHandler {
         if (inserting) {
             insert();
         }
-        System.out.println();
-        for (int i = 0; i < yPositions; i += 1) {
-            for (int j = 0; j < xPositions; j += 1) {
-                System.out.print(getType(j, i));
-            }
-            System.out.println();
-        }
+//        System.out.println();
+//        for (int i = 0; i < yPositions; i += 1) {
+//            for (int j = 0; j < xPositions; j += 1) {
+//                System.out.print(getType(j, i));
+//            }
+//            System.out.println();
+//        }
         for (Iterator<Particle> iter = getParticles(); iter.hasNext();) {
             Particle p = iter.next();
             if (particlesToBeRemoved.contains(p)) {
