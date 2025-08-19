@@ -48,7 +48,12 @@ public class Dijkstra {
         }
         Particle edge = ParticleHandler.getParticle(x, y);
         if (!visited.contains(edge)) {
-            heap.add(edge, distance(edge));
+            if (edge.getType() == Constants.WATER) {
+                heap.add(edge, distance(edge));
+            }
+            else {
+                heap.add(edge, Double.POSITIVE_INFINITY);
+            }
             visited.add(edge);
         }
     }

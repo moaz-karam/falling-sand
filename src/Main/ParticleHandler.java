@@ -1,10 +1,11 @@
 package Main;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
 
-public class ParticleHandler {
+public class ParticleHandler implements Runnable {
 
     public static final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
     public static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
@@ -75,54 +76,54 @@ public class ParticleHandler {
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
 
 
-//        for (int y = yIndex - 4; y < yIndex + 4; y += 1) {
+        for (int y = yIndex - 4; y < yIndex + 4; y += 1) {
+
+            for (int x = xIndex - 4; x < xIndex + 4; x += 1) {
+                if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
+                    continue;
+                }
+
+                if (selectedType == Constants.REMOVE) {
+                    if (grid[x][y] != null) {
+                        remove(grid[x][y]);
+                    }
+                }
+
+                else if (selectedType == Constants.FIRE) {
+                    if (getType(x, y) == Constants.WOOD) {
+                        grid[x][y].setOnFire();
+                    }
+                }
+                else if (grid[x][y] == null) {
+                    Particle insertedParticle = createParticle(x, y);
+                    grid[x][y] = insertedParticle;
+                    particles.push(insertedParticle);
+                }
+            }
+        }
+
+
+//        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
+//            return;
+//        }
 //
-//            for (int x = xIndex - 4; x < xIndex + 4; x += 1) {
-//                if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
-//                    continue;
-//                }
 //
-//                if (selectedType == Constants.REMOVE) {
-//                    if (grid[x][y] != null) {
-//                        remove(grid[x][y]);
-//                    }
-//                }
-//
-//                else if (selectedType == Constants.FIRE) {
-//                    if (getType(x, y) == Constants.WOOD) {
-//                        grid[x][y].setOnFire();
-//                    }
-//                }
-//                else if (grid[x][y] == null) {
-//                    Particle insertedParticle = createParticle(x, y);
-//                    grid[x][y] = insertedParticle;
-//                    particles.push(insertedParticle);
-//                }
+//        if (selectedType == Constants.REMOVE) {
+//            if (grid[xIndex][yIndex] != null) {
+//                remove(grid[xIndex][yIndex]);
 //            }
 //        }
-
-
-        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
-            return;
-        }
-
-
-        if (selectedType == Constants.REMOVE) {
-            if (grid[xIndex][yIndex] != null) {
-                remove(grid[xIndex][yIndex]);
-            }
-        }
-
-        else if (selectedType == Constants.FIRE) {
-            if (getType(xIndex, yIndex) == Constants.WOOD) {
-                grid[xIndex][yIndex].setOnFire();
-            }
-        }
-        else if (grid[xIndex][yIndex] == null) {
-            Particle insertedParticle = createParticle(xIndex, yIndex);
-            grid[xIndex][yIndex] = insertedParticle;
-            particles.push(insertedParticle);
-        }
+//
+//        else if (selectedType == Constants.FIRE) {
+//            if (getType(xIndex, yIndex) == Constants.WOOD) {
+//                grid[xIndex][yIndex].setOnFire();
+//            }
+//        }
+//        else if (grid[xIndex][yIndex] == null) {
+//            Particle insertedParticle = createParticle(xIndex, yIndex);
+//            grid[xIndex][yIndex] = insertedParticle;
+//            particles.push(insertedParticle);
+//        }
     }
     public static int getType(int xIndex, int yIndex) {
         if (grid[xIndex][yIndex] == null) {
@@ -152,7 +153,7 @@ public class ParticleHandler {
 //            }
 //            System.out.println();
 //        }
-        for (Iterator<Particle> iter = getParticles(); iter.hasNext();) {
+        for (Iterator<Particle> iter = particles.iterator(); iter.hasNext();) {
             Particle p = iter.next();
             if (particlesToBeRemoved.contains(p)) {
                 iter.remove();
@@ -164,8 +165,23 @@ public class ParticleHandler {
         }
     }
 
-    public Iterator<Particle> getParticles() {
-        return particles.iterator();
+    public void run() {
+        double timerPerFrame = 1 / Constants.FRAMES_PER_SECOND;
+        long lastFrameTime = System.nanoTime();
+
+        while (true) {
+            long now = System.nanoTime();
+            if ((now - lastFrameTime) / 1_000_000_000.0 >= timerPerFrame) {
+                update();
+                lastFrameTime = now;
+            }
+        }
+    }
+
+    public Particle[] getParticles() {
+        Particle[] returnedArray = new Particle[particles.size()];
+        particles.toArray(returnedArray);
+        return returnedArray;
     }
     public int getSelectedType() {
         return selectedType;

@@ -10,6 +10,7 @@ public class Panel extends JPanel {
     private final ParticleHandler ph;
     private final Mouse mouse;
     private final Keyboard keyboard;
+    private Thread phThread;
 
     public Panel() {
         ph = new ParticleHandler();
@@ -26,13 +27,21 @@ public class Panel extends JPanel {
         setBackground(Color.DARK_GRAY);
         setVisible(true);
         frame = new Frame(this);
+
+        phThread = new Thread(ph);
+        phThread.start();
     }
 
     public void paint(Graphics g) {
         super.paint(g);
-        for (Iterator<Particle> iter = ph.getParticles(); iter.hasNext();) {
+        Particle[] particles = ph.getParticles();
+        for (int i = 0; i < particles.length; i += 1) {
 
-            Particle p = iter.next();
+            Particle p = particles[i];
+
+            if (p == null) {
+                continue;
+            }
 
             g.setColor(p.getColor());
 

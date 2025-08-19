@@ -25,7 +25,7 @@ public class Main implements Runnable {
         while (true) {
             long now = System.nanoTime();
             if ((now - lastFrameTime) / 1_000_000_000.0 >= timerPerFrame) {
-                panel.update();
+//                panel.update();
                 panel.repaint();
                 Toolkit.getDefaultToolkit().sync();
                 lastFrameTime = now;
