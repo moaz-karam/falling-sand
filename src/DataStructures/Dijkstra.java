@@ -11,21 +11,6 @@ public class Dijkstra {
     private HashSet<Particle> visited;
     private MinHeap<Particle> heap;
 
-//    class Position {
-//        int x;
-//        int y;
-//
-//        private Position(int x, int y) {
-//            this.x = x;
-//            this.y = y;
-//        }
-//        private int getX() {
-//            return x;
-//        }
-//        private int getY() {
-//            return y;
-//        }
-//    }
 
     public Dijkstra(Particle s) {
         source = s;
@@ -63,12 +48,7 @@ public class Dijkstra {
         }
         Particle edge = ParticleHandler.getParticle(x, y);
         if (!visited.contains(edge)) {
-            if (edge.getType() == Constants.WATER) {
-                heap.add(edge, distance(edge));
-            }
-            else {
-                heap.add(edge, Double.POSITIVE_INFINITY);
-            }
+            heap.add(edge, distance(edge));
             visited.add(edge);
         }
     }
