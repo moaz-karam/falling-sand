@@ -1,3 +1,5 @@
+package Main;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.FocusEvent;
@@ -9,7 +11,7 @@ public class Frame extends JFrame {
     public Frame(JPanel panel) {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-        setTitle("Falling-Sand");
+        setTitle("Falling-Main.Sand");
         add(panel);
         setUndecorated(true);
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();

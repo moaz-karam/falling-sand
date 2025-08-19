@@ -1,3 +1,5 @@
+package Main;
+
 import java.awt.*;
 
 public class Water implements Particle {

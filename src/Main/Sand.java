@@ -1,4 +1,9 @@
+package Main;
+
+
+
 import java.awt.*;
+import DataStructures.Dijkstra;
 
 public class Sand implements Particle {
 
@@ -41,73 +46,20 @@ public class Sand implements Particle {
     public void setColor(Color c) {
         color = c;
     }
-    private int[] findNearestWater(int xIndex, int yIndex) {
-        int rightX = xIndex + 1;
-        int leftX = xIndex - 1;
-        int nearestX = xIndex;
-        int nearestY = yIndex;
-        int direction;
-
-        if (rightX >= ParticleHandler.xPositions - 1) {
-            nearestX = leftX;
-            direction = 1;
-        }
-        else if (leftX < 0) {
-            nearestX = rightX;
-            direction = -1;
-        }
-        else {
-            for (int i = rightX; i < ParticleHandler.xPositions; i += 1) {
-                if (ParticleHandler.getType(i, yIndex) == 0 || ParticleHandler.getType(i, yIndex) == Constants.WATER) {
-                    rightX = i;
-                    break;
-                }
-            }
-            for (int i = leftX; i >= 0; i -= 1) {
-                if (ParticleHandler.getType(i, yIndex) == 0 || ParticleHandler.getType(i, yIndex) == Constants.WATER) {
-                    leftX = i;
-                    break;
-                }
-            }
-
-            if ((xIndex - leftX) >= (rightX - xIndex)) {
-                nearestX = rightX;
-                direction = 1;
-            }
-            else {
-                nearestX = leftX;
-                direction = -1;
-            }
-        }
-
-        for (int i = nearestY; i >= 0; i -= 1) {
-            int t = ParticleHandler.getType(nearestX, i);
-
-            if (t == 0) {
-                nearestY = i;
-                break;
-            }
-            else if (t != Constants.WATER) {
-                if (nearestX <= 0 || nearestX >= ParticleHandler.xPositions - 1) {
-                    direction *= -1;
-                }
-                nearestX += direction;
-            }
-
-        }
-
-        return new int[] {nearestX, nearestY};
+    private int[] findNearestValidPoint(int xIndex, int yIndex) {
+        Dijkstra pointFinder = new Dijkstra(ParticleHandler.getParticle(xIndex, yIndex));
+        return pointFinder.getPosition();
     }
     private void updateWater(int xIndex, int yIndex) {
-        int[] newPoints = findNearestWater(xIndex, yIndex);
+        int[] newPoints = findNearestValidPoint(xIndex, yIndex);
         int newX = newPoints[0];
         int newY = newPoints[1];
 
         Particle waterParticle = ParticleHandler.getParticle(xIndex, yIndex);
+        ParticleHandler.setParticle(xIndex, yIndex, null);
         ParticleHandler.setParticle(newX, newY, waterParticle);
         waterParticle.setX(newX);
         waterParticle.setY(newY);
-        ParticleHandler.setParticle(xIndex, yIndex, null);
     }
     public void update() {
 

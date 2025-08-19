@@ -1,3 +1,5 @@
+package Main;
+
 import java.awt.Toolkit;
 
 public class Main implements Runnable {

@@ -1,3 +1,5 @@
+package Main;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Stack;
@@ -73,27 +75,54 @@ public class ParticleHandler {
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
 
 
-        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
-            return;
-        }
+        for (int y = yIndex - 1; y < yIndex + 1; y += 1) {
 
+            for (int x = xIndex - 1; x < xIndex + 1; x += 1) {
+                if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
+                    continue;
+                }
 
-        if (selectedType == Constants.REMOVE) {
-            if (grid[xIndex][yIndex] != null) {
-                remove(grid[xIndex][yIndex]);
+                if (selectedType == Constants.REMOVE) {
+                    if (grid[x][y] != null) {
+                        remove(grid[x][y]);
+                    }
+                }
+
+                else if (selectedType == Constants.FIRE) {
+                    if (getType(x, y) == Constants.WOOD) {
+                        grid[x][y].setOnFire();
+                    }
+                }
+                else if (grid[x][y] == null) {
+                    Particle insertedParticle = createParticle(x, y);
+                    grid[x][y] = insertedParticle;
+                    particles.push(insertedParticle);
+                }
             }
         }
 
-        else if (selectedType == Constants.FIRE) {
-            if (getType(xIndex, yIndex) == Constants.WOOD) {
-                grid[xIndex][yIndex].setOnFire();
-            }
-        }
-        else if (grid[xIndex][yIndex] == null) {
-            Particle insertedParticle = createParticle(xIndex, yIndex);
-            grid[xIndex][yIndex] = insertedParticle;
-            particles.push(insertedParticle);
-        }
+
+//        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
+//            return;
+//        }
+//
+//
+//        if (selectedType == Constants.REMOVE) {
+//            if (grid[xIndex][yIndex] != null) {
+//                remove(grid[xIndex][yIndex]);
+//            }
+//        }
+//
+//        else if (selectedType == Constants.FIRE) {
+//            if (getType(xIndex, yIndex) == Constants.WOOD) {
+//                grid[xIndex][yIndex].setOnFire();
+//            }
+//        }
+//        else if (grid[xIndex][yIndex] == null) {
+//            Particle insertedParticle = createParticle(xIndex, yIndex);
+//            grid[xIndex][yIndex] = insertedParticle;
+//            particles.push(insertedParticle);
+//        }
     }
     public static int getType(int xIndex, int yIndex) {
         if (grid[xIndex][yIndex] == null) {

@@ -1,14 +1,16 @@
+package Main;
+
 import java.awt.*;
 
 public class Constants {
 
-    public static final double PARTICLE_WIDTH = 16;
-    public static final double PARTICLE_HEIGHT = 16;
+    public static final double PARTICLE_WIDTH = 10;
+    public static final double PARTICLE_HEIGHT = 10;
 
     public static final double MOUSE_WIDTH = PARTICLE_WIDTH * 4;
     public static final double MOUSE_HEIGHT = PARTICLE_HEIGHT * 4;
 
-    public static final double FRAMES_PER_SECOND = 180;
+    public static final double FRAMES_PER_SECOND = 120;
 
     public static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     public static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
