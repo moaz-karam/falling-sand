@@ -75,9 +75,9 @@ public class ParticleHandler {
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
 
 
-        for (int y = yIndex - 1; y < yIndex + 1; y += 1) {
+        for (int y = yIndex - 4; y < yIndex + 4; y += 1) {
 
-            for (int x = xIndex - 1; x < xIndex + 1; x += 1) {
+            for (int x = xIndex - 4; x < xIndex + 4; x += 1) {
                 if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
                     continue;
                 }
