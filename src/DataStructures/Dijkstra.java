@@ -1,6 +1,6 @@
 package DataStructures;
 
-import java.util.HashSet;
+import java.util.Hashtable;
 import Main.*;
 
 public class Dijkstra {
@@ -8,13 +8,13 @@ public class Dijkstra {
     private Particle source;
     private int[] position;
     private boolean positionFound;
-    private HashSet<Particle> visited;
+    private Hashtable<Particle, Integer> distTo;
     private MinHeap<Particle> heap;
 
 
     public Dijkstra(Particle s) {
         source = s;
-        visited = new HashSet<>();
+        distTo = new Hashtable<>();
         positionFound = false;
         heap = new MinHeap<>();
         position = new int[] {s.getX(), s.getY()};
@@ -40,21 +40,21 @@ public class Dijkstra {
         return ParticleHandler.getType(x, y);
     }
 
-    private void addEdgeHelper(int x, int y) {
+    private void addEdgeHelper(Particle p, int x, int y) {
         if (edgeType(x, y) == 0) {
             positionFound = true;
             position = new int[] {x, y};
             return;
         }
         Particle edge = ParticleHandler.getParticle(x, y);
-        if (!visited.contains(edge)) {
+        if (!distTo.containsKey(edge)) {
+            distTo.put(edge, distTo.get(p) + 1);
             if (edge.getType() == Constants.WATER) {
-                heap.add(edge, distance(edge));
+                heap.add(edge, distTo.get(edge));
             }
             else {
                 heap.add(edge, Double.POSITIVE_INFINITY);
             }
-            visited.add(edge);
         }
     }
 
@@ -68,21 +68,21 @@ public class Dijkstra {
         int left = x - 1;
 
         if (!positionFound && validEdge(right, y)) {
-            addEdgeHelper(right, y);
+            addEdgeHelper(p, right, y);
         }
         if (!positionFound && validEdge(left, y)) {
-            addEdgeHelper(left, y);
+            addEdgeHelper(p, left, y);
         }
         if (!positionFound && p.getType() == Constants.WATER && validEdge(x, up)) {
-            addEdgeHelper(x, up);
+            addEdgeHelper(p, x, up);
         }
 
     }
 
     private void findPosition() {
         Particle current = source;
+        distTo.put(current, 0);
         addEdges(current);
-        visited.add(current);
         while (!positionFound && heap.getSize() > 0) {
             current = heap.removeSmallest();
             addEdges(current);

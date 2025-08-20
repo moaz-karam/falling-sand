@@ -13,7 +13,9 @@ public class Frame extends JFrame {
         setResizable(false);
         setTitle("Falling-Main.Sand");
         add(panel);
-        setUndecorated(true);
+//        pack();
+//        setLocationRelativeTo(null);
+//        setVisible(true);
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
         if (gd.isFullScreenSupported()) {

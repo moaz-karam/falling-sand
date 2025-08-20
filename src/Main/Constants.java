@@ -4,8 +4,8 @@ import java.awt.*;
 
 public class Constants {
 
-    public static final double PARTICLE_WIDTH = 4;
-    public static final double PARTICLE_HEIGHT = 4;
+    public static final double PARTICLE_WIDTH = 8;
+    public static final double PARTICLE_HEIGHT = 8;
 
     public static final double MOUSE_WIDTH = PARTICLE_WIDTH * 4;
     public static final double MOUSE_HEIGHT = PARTICLE_HEIGHT * 4;
@@ -13,7 +13,7 @@ public class Constants {
     public static final double FRAMES_PER_SECOND = 60;
 
     public static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    public static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    public static final double SCREEN_HEIGHT = Toolkit.getDefaultToolkit().getScreenSize().getHeight();;
 
     public static final int WATER = 1;
     public static final int SAND = 2;
