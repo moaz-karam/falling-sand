@@ -10,13 +10,14 @@ public class Panel extends JPanel {
     private final ParticleHandler ph;
     private final Mouse mouse;
     private final Keyboard keyboard;
+    private boolean showSand;
     private Thread phThread;
 
     public Panel() {
         ph = new ParticleHandler();
         mouse = new Mouse(this);
         keyboard = new Keyboard(this);
-
+        showSand = true;
         Dimension size = new Dimension((int)Constants.SCREEN_WIDTH, (int)Constants.SCREEN_HEIGHT);
         addMouseMotionListener(mouse);
         addMouseListener(mouse);
@@ -35,11 +36,15 @@ public class Panel extends JPanel {
     public void paint(Graphics g) {
         super.paint(g);
         Particle[] particles = ph.getParticles();
+
         for (int i = 0; i < particles.length; i += 1) {
 
             Particle p = particles[i];
 
             if (p == null) {
+                continue;
+            }
+            if (p.getType() == Constants.SAND && !showSand) {
                 continue;
             }
 
@@ -48,6 +53,7 @@ public class Panel extends JPanel {
             g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
                     (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
         }
+
         g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
         g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
     }
@@ -76,4 +82,11 @@ public class Panel extends JPanel {
     }
     public void selectFire() {ph.selectFire();}
     public void selectRemove() {ph.selectRemove();}
+    public void changeShowSandState() {
+        if (showSand) {
+            showSand = false;
+            return;
+        }
+        showSand = true;
+    }
 }

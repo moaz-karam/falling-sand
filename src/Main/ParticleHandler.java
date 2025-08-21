@@ -11,14 +11,13 @@ public class ParticleHandler implements Runnable {
     public static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
     private static final Particle[][] grid = new Particle[xPositions][yPositions];
     private final Stack<Particle> particles;
-    private static final HashSet<Particle> particlesToBeRemoved = new HashSet<>();
 
     private boolean inserting;
 
     private int selectedType;
 
-    private double mouseX;
-    private double mouseY;
+    private static double mouseX;
+    private static double mouseY;
 
     public ParticleHandler() {
         particles = new Stack<>();
@@ -47,16 +46,18 @@ public class ParticleHandler implements Runnable {
         mouseX = x;
         mouseY = y;
     }
-    public int getMouseX() {
+    public static int getMouseX() {
         int x = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
         return (int) (x * Constants.PARTICLE_WIDTH);
     }
-    public int getMouseY() {
+    public static int getMouseY() {
         int y = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
         return (int)(y * Constants.PARTICLE_HEIGHT);
     }
     public static void remove(Particle p) {
-        particlesToBeRemoved.add(p);
+        if (p != null) {
+            grid[p.getX()][p.getY()] = null;
+        }
     }
     private Particle createParticle(int x, int y) {
         switch (selectedType) {
@@ -84,9 +85,7 @@ public class ParticleHandler implements Runnable {
                 }
 
                 if (selectedType == Constants.REMOVE) {
-                    if (grid[x][y] != null) {
-                        remove(grid[x][y]);
-                    }
+                    grid[x][y] = null;
                 }
 
                 else if (selectedType == Constants.FIRE) {
@@ -102,7 +101,7 @@ public class ParticleHandler implements Runnable {
             }
         }
 
-
+//
 //        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
 //            return;
 //        }
@@ -125,17 +124,23 @@ public class ParticleHandler implements Runnable {
 //            particles.push(insertedParticle);
 //        }
     }
-    public static int getType(int xIndex, int yIndex) {
-        if (grid[xIndex][yIndex] == null) {
+    public static int getType(int x, int y) {
+        if (grid[x][y] == null) {
             return 0;
         }
-        return grid[xIndex][yIndex].getType();
+        return grid[x][y].getType();
     }
-    public static Particle getParticle(int xIndex, int yIndex) {
-        return grid[xIndex][yIndex];
+    public static Particle getParticle(int x, int y) {
+        return grid[x][y];
     }
     public static void setParticle(int x, int y, Particle p) {
+        if (p == null) {
+            return;
+        }
+        grid[p.getX()][p.getY()] = null;
         grid[x][y] = p;
+        p.setX(x);
+        p.setY(y);
     }
     public static boolean strongerThan(int t1, int t2) {
         return t1 <= t2;
@@ -146,19 +151,12 @@ public class ParticleHandler implements Runnable {
         if (inserting) {
             insert();
         }
-//        System.out.println();
-//        for (int i = 0; i < yPositions; i += 1) {
-//            for (int j = 0; j < xPositions; j += 1) {
-//                System.out.print(getType(j, i));
-//            }
-//            System.out.println();
-//        }
+
         for (Iterator<Particle> iter = particles.iterator(); iter.hasNext();) {
             Particle p = iter.next();
-            if (particlesToBeRemoved.contains(p)) {
+
+            if (getParticle(p.getX(), p.getY()) != p) {
                 iter.remove();
-                particlesToBeRemoved.remove(p);
-                grid[p.getX()][p.getY()] = null;
                 continue;
             }
             p.update();

@@ -81,10 +81,9 @@ public class Wood implements Particle {
         long now = System.nanoTime();
 
 
-                if ((now - firingTime) / 1_000_000_000.0 >= VANISH_TIME) {
-                    ParticleHandler.remove(this);
-                    return;
-                }
+        if ((now - firingTime) / 1_000_000_000.0 >= VANISH_TIME) {
+            ParticleHandler.remove(this);
+        }
 
         else if (burnTheSurroundings && (now - firingTime) / 1_000_000_000.0 >= (VANISH_TIME / 3)) {
             for (int yIndex = minY; yIndex <= maxY && yIndex < ParticleHandler.yPositions; yIndex += 1) {

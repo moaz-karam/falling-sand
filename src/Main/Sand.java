@@ -3,7 +3,7 @@ package Main;
 
 
 import java.awt.*;
-import DataStructures.Dijkstra;
+import DataStructures.*;
 
 public class Sand implements Particle {
 
@@ -47,19 +47,22 @@ public class Sand implements Particle {
         color = c;
     }
     private int[] findNearestValidPoint(int xIndex, int yIndex) {
-        Dijkstra pointFinder = new Dijkstra(ParticleHandler.getParticle(xIndex, yIndex));
+        AStar pointFinder = new AStar(ParticleHandler.getParticle(xIndex, yIndex));
         return pointFinder.getPosition();
     }
     private void updateWater(int xIndex, int yIndex) {
         int[] newPoints = findNearestValidPoint(xIndex, yIndex);
+        if (newPoints == null) {
+            return;
+        }
         int newX = newPoints[0];
         int newY = newPoints[1];
 
         Particle waterParticle = ParticleHandler.getParticle(xIndex, yIndex);
-        ParticleHandler.setParticle(xIndex, yIndex, null);
         ParticleHandler.setParticle(newX, newY, waterParticle);
-        waterParticle.setX(newX);
-        waterParticle.setY(newY);
+    }
+    private void putSand(int xIndex, int yIndex) {
+        ParticleHandler.setParticle(xIndex, yIndex, this);
     }
     public void update() {
 
@@ -95,27 +98,21 @@ public class Sand implements Particle {
             if (bottomType == Constants.WATER) {
                 updateWater(x, bottom);
             }
-            ParticleHandler.setParticle(x, y, null);
-            ParticleHandler.setParticle(x, bottom, this);
-            setY(bottom);
+            putSand(x, bottom);
         }
         else if (checkRight && !ParticleHandler.strongerThan(type, bottomRightType)) {
             if (bottomRightType == Constants.WATER) {
                 updateWater(right, bottom);
             }
-            ParticleHandler.setParticle(x, y, null);
-            ParticleHandler.setParticle(right, bottom, this);
-            setX(right);
-            setY(bottom);
+            putSand(right, bottom);
+
         }
         else if (checkLeft && !ParticleHandler.strongerThan(type, bottomLeftType)) {
             if (bottomLeftType == Constants.WATER) {
                 updateWater(left, bottom);
             }
-            ParticleHandler.setParticle(x, y, null);
-            ParticleHandler.setParticle(left, bottom, this);
-            setX(left);
-            setY(bottom);
+            putSand(left, bottom);
+
         }
     }
 
