@@ -103,6 +103,10 @@ public class MinHeap<T> {
         return null;
     }
 
+    public double getSmallestPriority() {
+        return items.get(0).getPriority();
+    }
+
     public int getSize() {
         return size;
     }

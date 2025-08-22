@@ -1,7 +1,5 @@
 package Main;
 
-
-
 import java.awt.*;
 import DataStructures.*;
 
@@ -11,6 +9,9 @@ public class Sand implements Particle {
     private int y;
     private int type;
     private Color color;
+    private int waterAbsorbed;
+
+    public static final int WATER_CAPACITY = 1;
 
 
     public Sand(int x, int y) {
@@ -19,6 +20,7 @@ public class Sand implements Particle {
 
         type = Constants.SAND;
         color = Constants.TYPE_COLOR[type];
+        waterAbsorbed = 0;
     }
 
     public int getX() {
@@ -116,9 +118,12 @@ public class Sand implements Particle {
         }
     }
 
-    public void setOnFire() {
+    public int getWaterAbsorbed() {
+        return waterAbsorbed;
     }
-    public boolean isOnFire() {
-        return false;
+    public void absorbWater(Water water) {
+        ParticleHandler.remove(water);
+        color = color.darker();
+        waterAbsorbed += 1;
     }
 }

@@ -19,7 +19,10 @@ public class ParticleHandler implements Runnable {
     private static double mouseX;
     private static double mouseY;
 
-    public ParticleHandler() {
+    private final Panel panel;
+
+    public ParticleHandler(Panel panel) {
+        this.panel = panel;
         particles = new Stack<>();
         inserting = false;
         selectedType = Constants.SAND;
@@ -72,14 +75,13 @@ public class ParticleHandler implements Runnable {
     }
     private void insert() {
 
-
         int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
 
 
         for (int y = yIndex - 4; y < yIndex + 4; y += 1) {
 
-            for (int x = xIndex - 4; x < xIndex + 4; x += 1) {
+            for (int x = xIndex + 4; x >= xIndex - 4; x -= 1) {
                 if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
                     continue;
                 }
@@ -90,7 +92,8 @@ public class ParticleHandler implements Runnable {
 
                 else if (selectedType == Constants.FIRE) {
                     if (getType(x, y) == Constants.WOOD) {
-                        grid[x][y].setOnFire();
+                        Wood wood = (Wood)grid[x][y];
+                        wood.setOnFire();
                     }
                 }
                 else if (grid[x][y] == null) {
@@ -147,7 +150,9 @@ public class ParticleHandler implements Runnable {
     }
 
     public void update() {
-
+        if (!panel.finishedDrawing) {
+            return;
+        }
         if (inserting) {
             insert();
         }
@@ -161,6 +166,8 @@ public class ParticleHandler implements Runnable {
             }
             p.update();
         }
+        panel.finishedDrawing = false;
+        panel.repaint();
     }
 
     public void run() {
@@ -176,10 +183,10 @@ public class ParticleHandler implements Runnable {
         }
     }
 
-    public Particle[] getParticles() {
-        Particle[] returnedArray = new Particle[particles.size()];
-        particles.toArray(returnedArray);
-        return returnedArray;
+    public Stack<Particle> getParticles() {
+//        Particle[] returnedArray = new Particle[particles.size()];
+//        particles.toArray(returnedArray);
+        return particles;
     }
     public int getSelectedType() {
         return selectedType;

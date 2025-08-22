@@ -15,6 +15,4 @@ public interface Particle {
 
     public void setColor(Color c);
     public void update();
-    public void setOnFire();
-    public boolean isOnFire();
 }

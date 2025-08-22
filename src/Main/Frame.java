@@ -13,32 +13,32 @@ public class Frame extends JFrame {
         setResizable(false);
         setTitle("Falling-Main.Sand");
         add(panel);
-//        pack();
-//        setLocationRelativeTo(null);
-//        setVisible(true);
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-
-        if (gd.isFullScreenSupported()) {
-            setUndecorated(true);
-            setResizable(false);
-
-            addFocusListener(new FocusListener() {
-                @Override
-                public void focusGained(FocusEvent e) {
-                    setAlwaysOnTop(true);
-                }
-
-                @Override
-                public void focusLost(FocusEvent e) {
-                    setAlwaysOnTop(false);
-                }
-            });
-
-            gd.setFullScreenWindow(this);
-        } else {
-            System.out.println("Full-screen exclusive mode not supported on this device.");
-            setVisible(true); // Show in windowed mode if full-screen is not supported
-        }
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+//        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+//
+//        if (gd.isFullScreenSupported()) {
+//            setUndecorated(true);
+//            setResizable(false);
+//
+//            addFocusListener(new FocusListener() {
+//                @Override
+//                public void focusGained(FocusEvent e) {
+//                    setAlwaysOnTop(true);
+//                }
+//
+//                @Override
+//                public void focusLost(FocusEvent e) {
+//                    setAlwaysOnTop(false);
+//                }
+//            });
+//
+//            gd.setFullScreenWindow(this);
+//        } else {
+//            System.out.println("Full-screen exclusive mode not supported on this device.");
+//            setVisible(true); // Show in windowed mode if full-screen is not supported
+//        }
 
         BufferedImage cursorImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(

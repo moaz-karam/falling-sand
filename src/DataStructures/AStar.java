@@ -1,8 +1,6 @@
 package DataStructures;
 
-import Main.Constants;
-import Main.Particle;
-import Main.ParticleHandler;
+import Main.*;
 
 import java.util.Hashtable;
 
@@ -10,8 +8,8 @@ public class AStar {
     private Particle source;
     private int[] position;
     private boolean positionFound;
-    private Hashtable<Particle, Integer> distTo;
-    private MinHeap<Particle> heap;
+    private final Hashtable<Particle, Integer> distTo;
+    private final MinHeap<Particle> heap;
 
 
     public AStar(Particle s) {
@@ -32,9 +30,6 @@ public class AStar {
     }
 
     private double heuristic(Particle p) {
-        if (p.getType() == Constants.SAND) {
-            return p.getY() + 50;
-        }
         return p.getY();
     }
 
@@ -51,6 +46,16 @@ public class AStar {
         }
 
         Particle edge = ParticleHandler.getParticle(x, y);
+
+        if (edge.getType() == Constants.SAND) {
+            Sand sand = (Sand) edge;
+            if (sand.getWaterAbsorbed() < Sand.WATER_CAPACITY) {
+                sand.absorbWater((Water)source);
+                positionFound = true;
+                return;
+            }
+        }
+
         if (!distTo.containsKey(edge)) {
             distTo.put(edge, distTo.get(p) + 1);
             heap.add(edge, distTo.get(edge) + heuristic(edge));
@@ -72,7 +77,7 @@ public class AStar {
         if (!positionFound && validEdge(left, y)) {
             addEdgeHelper(p, left, y);
         }
-        if (!positionFound && p.getType() != Constants.WATER && validEdge(x, up)) {
+        if (!positionFound && validEdge(x, up)) {
             addEdgeHelper(p, x, up);
         }
     }
@@ -81,7 +86,7 @@ public class AStar {
         Particle current = source;
         distTo.put(current, 0);
         addEdges(current);
-        while (distTo.get(current) <= 20 && !positionFound && heap.getSize() > 0) {
+        while (!positionFound && heap.getSize() > 0) {
             current = heap.removeSmallest();
             addEdges(current);
         }

@@ -12,9 +12,10 @@ public class Panel extends JPanel {
     private final Keyboard keyboard;
     private boolean showSand;
     private Thread phThread;
+    public boolean finishedDrawing;
 
     public Panel() {
-        ph = new ParticleHandler();
+        ph = new ParticleHandler(this);
         mouse = new Mouse(this);
         keyboard = new Keyboard(this);
         showSand = true;
@@ -29,21 +30,35 @@ public class Panel extends JPanel {
         setVisible(true);
         frame = new Frame(this);
 
+        finishedDrawing = true;
         phThread = new Thread(ph);
         phThread.start();
     }
 
     public void paint(Graphics g) {
         super.paint(g);
-        Particle[] particles = ph.getParticles();
+//        Particle[] particles = ph.getParticles();
+//
+//        for (int i = 0; i < particles.length; i += 1) {
+//
+//            Particle p = particles[i];
+//
+//            if (p == null) {
+//                continue;
+//            }
+//            if (p.getType() == Constants.SAND && !showSand) {
+//                continue;
+//            }
+//
+//            g.setColor(p.getColor());
+//
+//            g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
+//                    (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+//        }
 
-        for (int i = 0; i < particles.length; i += 1) {
+        for (Particle p : ph.getParticles()) {
 
-            Particle p = particles[i];
 
-            if (p == null) {
-                continue;
-            }
             if (p.getType() == Constants.SAND && !showSand) {
                 continue;
             }
@@ -52,10 +67,13 @@ public class Panel extends JPanel {
 
             g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
                     (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+
         }
 
         g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
-        g.fillRect(ph.getMouseX(), ph.getMouseY(), (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+        g.fillRect(ParticleHandler.getMouseX(), ParticleHandler.getMouseY(),
+                (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+        finishedDrawing = true;
     }
 
     public void update() {

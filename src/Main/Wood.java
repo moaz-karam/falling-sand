@@ -85,7 +85,7 @@ public class Wood implements Particle {
             ParticleHandler.remove(this);
         }
 
-        else if (burnTheSurroundings && (now - firingTime) / 1_000_000_000.0 >= (VANISH_TIME / 3)) {
+        else if (burnTheSurroundings && (now - firingTime) / 1_000_000_000.0 >= (VANISH_TIME / 8)) {
             for (int yIndex = minY; yIndex <= maxY && yIndex < ParticleHandler.yPositions; yIndex += 1) {
                 for (int xIndex = minX; xIndex <= maxX && xIndex < ParticleHandler.xPositions; xIndex += 1) {
 
@@ -94,8 +94,9 @@ public class Wood implements Particle {
                     if (ParticleHandler.getType(xIndex, yIndex) != 0) {
                         Particle p = ParticleHandler.getParticle(xIndex, yIndex);
                         if (p.getType() == Constants.WOOD) {
-                            if (!p.isOnFire()) {
-                                p.setOnFire();
+                            Wood wood = (Wood)p;
+                            if (!wood.isOnFire()) {
+                                wood.setOnFire();
                             }
                         } else {
                             p.setColor(p.getColor().darker());
@@ -109,7 +110,6 @@ public class Wood implements Particle {
                 for (int xIndex = minX; xIndex <= maxX && xIndex < ParticleHandler.xPositions; xIndex += 1) {
 
                     lastFireUpdate = now;
-                    color = color.brighter();
                     if (ParticleHandler.getType(xIndex, yIndex) != 0) {
                         Particle p = ParticleHandler.getParticle(xIndex, yIndex);
                         p.setColor(p.getColor().darker());

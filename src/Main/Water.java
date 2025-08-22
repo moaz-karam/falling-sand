@@ -71,10 +71,5 @@ public class Water implements Particle {
             setX(secondDirection);
         }
     }
-    public void setOnFire() {
-    }
-    public boolean isOnFire() {
-        return false;
-    }
 
 }
