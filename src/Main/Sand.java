@@ -10,6 +10,7 @@ public class Sand implements Particle {
     private int type;
     private Color color;
     private int waterAbsorbed;
+    private int speed;
 
     public static final int WATER_CAPACITY = 1;
 
@@ -21,6 +22,7 @@ public class Sand implements Particle {
         type = Constants.SAND;
         color = Constants.TYPE_COLOR[type];
         waterAbsorbed = 0;
+        speed = Constants.PARTICLE_SPEED;
     }
 
     public int getX() {
@@ -93,7 +95,7 @@ public class Sand implements Particle {
         int bottomType = ParticleHandler.getType(x, bottom);
 
         if (bottomType != Constants.SAND) {
-            if (ParticleHandler.strongerThan(type, bottomType)) {
+            if (ParticleHandler.strongerThan(bottomType, type)) {
                 return;
             }
 
@@ -102,19 +104,18 @@ public class Sand implements Particle {
             }
             putSand(x, bottom);
         }
-        else if (checkRight && !ParticleHandler.strongerThan(type, bottomRightType)) {
+        else if (checkRight && !ParticleHandler.strongerThan(bottomRightType, type)) {
             if (bottomRightType == Constants.WATER) {
                 updateWater(right, bottom);
             }
             putSand(right, bottom);
 
         }
-        else if (checkLeft && !ParticleHandler.strongerThan(type, bottomLeftType)) {
+        else if (checkLeft && !ParticleHandler.strongerThan(bottomLeftType, type)) {
             if (bottomLeftType == Constants.WATER) {
                 updateWater(left, bottom);
             }
             putSand(left, bottom);
-
         }
     }
 
@@ -123,7 +124,6 @@ public class Sand implements Particle {
     }
     public void absorbWater(Water water) {
         ParticleHandler.remove(water);
-        color = color.darker();
         waterAbsorbed += 1;
     }
 }

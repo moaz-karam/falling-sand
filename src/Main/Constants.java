@@ -6,6 +6,8 @@ public class Constants {
 
     public static final double PARTICLE_WIDTH = 4;
     public static final double PARTICLE_HEIGHT = 4;
+    public static final int PARTICLE_SPEED = 4;
+    public static final int PARTICLE_WATER_SPEED = 2;
 
     public static final double MOUSE_WIDTH = PARTICLE_WIDTH * 4;
     public static final double MOUSE_HEIGHT = PARTICLE_HEIGHT * 4;

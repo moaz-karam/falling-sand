@@ -104,7 +104,7 @@ public class ParticleHandler implements Runnable {
             }
         }
 
-//
+
 //        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
 //            return;
 //        }
@@ -118,7 +118,8 @@ public class ParticleHandler implements Runnable {
 //
 //        else if (selectedType == Constants.FIRE) {
 //            if (getType(xIndex, yIndex) == Constants.WOOD) {
-//                grid[xIndex][yIndex].setOnFire();
+//                Wood wood = (Wood)grid[xIndex][yIndex];
+//                wood.setOnFire();
 //            }
 //        }
 //        else if (grid[xIndex][yIndex] == null) {
@@ -146,7 +147,7 @@ public class ParticleHandler implements Runnable {
         p.setY(y);
     }
     public static boolean strongerThan(int t1, int t2) {
-        return t1 <= t2;
+        return t1 >= t2;
     }
 
     public void update() {
