@@ -21,12 +21,7 @@ public class AStar {
     }
 
     private boolean validEdge(int x, int y) {
-
-        if (y < 0 || y >= ParticleHandler.yPositions
-                || x < 0 || x >= ParticleHandler.xPositions) {
-            return false;
-        }
-        return ParticleHandler.getType(x, y) != Constants.WOOD;
+        return ParticleHandler.validPoint(x, y) && ParticleHandler.getType(x, y) != Constants.WOOD;
     }
 
     private double heuristic(Particle p) {

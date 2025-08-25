@@ -80,14 +80,14 @@ public class Sand implements Particle {
         int bottomRightType = -1;
         int bottomLeftType = -1;
 
-        if (bottom >= ParticleHandler.yPositions) {
+        if (!ParticleHandler.validPoint(x, bottom)) {
             return;
         }
-        if (right < ParticleHandler.xPositions) {
+        if (ParticleHandler.validPoint(right, bottom) && ParticleHandler.getType(right, y) == 0) {
             checkRight = true;
             bottomRightType = ParticleHandler.getType(right, bottom);
         }
-        if (left >= 0) {
+        if (ParticleHandler.validPoint(left, bottom) && ParticleHandler.getType(left, y) == 0) {
             checkLeft = true;
             bottomLeftType = ParticleHandler.getType(left, bottom);
         }
@@ -95,7 +95,7 @@ public class Sand implements Particle {
         int bottomType = ParticleHandler.getType(x, bottom);
 
         if (bottomType != Constants.SAND) {
-            if (ParticleHandler.strongerThan(bottomType, type)) {
+            if (ParticleHandler.strongerThan(bottomType, type - 1)) {
                 return;
             }
 
@@ -104,14 +104,14 @@ public class Sand implements Particle {
             }
             putSand(x, bottom);
         }
-        else if (checkRight && !ParticleHandler.strongerThan(bottomRightType, type)) {
+        else if (checkRight && !ParticleHandler.strongerThan(bottomRightType, type - 1)) {
             if (bottomRightType == Constants.WATER) {
                 updateWater(right, bottom);
             }
             putSand(right, bottom);
 
         }
-        else if (checkLeft && !ParticleHandler.strongerThan(bottomLeftType, type)) {
+        else if (checkLeft && !ParticleHandler.strongerThan(bottomLeftType, type - 1)) {
             if (bottomLeftType == Constants.WATER) {
                 updateWater(left, bottom);
             }

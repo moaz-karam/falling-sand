@@ -7,8 +7,8 @@ import java.util.Stack;
 
 public class ParticleHandler implements Runnable {
 
-    public static final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
-    public static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
+    private static final int xPositions = (int)(Constants.SCREEN_WIDTH / Constants.PARTICLE_WIDTH);
+    private static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
     private static final Particle[][] grid = new Particle[xPositions][yPositions];
     private final Stack<Particle> particles;
 
@@ -147,7 +147,10 @@ public class ParticleHandler implements Runnable {
         p.setY(y);
     }
     public static boolean strongerThan(int t1, int t2) {
-        return t1 >= t2;
+        return t1 > t2;
+    }
+    public static boolean validPoint(int x, int y) {
+        return x < xPositions && x >= 0 && y < yPositions && y >= 0;
     }
 
     public void update() {

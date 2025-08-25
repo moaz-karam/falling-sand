@@ -12,10 +12,13 @@ public class Constants {
     public static final double MOUSE_WIDTH = PARTICLE_WIDTH * 4;
     public static final double MOUSE_HEIGHT = PARTICLE_HEIGHT * 4;
 
-    public static final double FRAMES_PER_SECOND = 120;
+    public static final double FRAMES_PER_SECOND = 60;
 
     public static final double SCREEN_WIDTH = 800;
     public static final double SCREEN_HEIGHT = 600;
+
+    public static final int X_COORDINATE = 0;
+    public static final int Y_COORDINATE = 1;
 
 
 //    public static final double SCREEN_WIDTH = Toolkit.getDefaultToolkit().getScreenSize().getWidth();

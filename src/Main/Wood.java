@@ -69,8 +69,11 @@ public class Wood implements Particle {
             minY += 1;
         }
 
-        for (int yIndex = minY; yIndex <= maxY && yIndex < ParticleHandler.yPositions; yIndex += 1) {
-            for (int xIndex = minX; xIndex <= maxX && xIndex < ParticleHandler.xPositions; xIndex += 1) {
+        for (int yIndex = minY; yIndex <= maxY; yIndex += 1) {
+            for (int xIndex = minX; xIndex <= maxX; xIndex += 1) {
+                if (!ParticleHandler.validPoint(xIndex, yIndex)) {
+                    continue;
+                }
                 if (ParticleHandler.getType(xIndex, yIndex) == Constants.WATER) {
                     putOffFire();
                     return;
@@ -86,8 +89,12 @@ public class Wood implements Particle {
         }
 
         else if (burnTheSurroundings && (now - firingTime) / 1_000_000_000.0 >= (VANISH_TIME / 8)) {
-            for (int yIndex = minY; yIndex <= maxY && yIndex < ParticleHandler.yPositions; yIndex += 1) {
-                for (int xIndex = minX; xIndex <= maxX && xIndex < ParticleHandler.xPositions; xIndex += 1) {
+            for (int yIndex = minY; yIndex <= maxY; yIndex += 1) {
+                for (int xIndex = minX; xIndex <= maxX; xIndex += 1) {
+
+                    if (!ParticleHandler.validPoint(xIndex, yIndex)) {
+                        continue;
+                    }
 
                     color = color.brighter();
                     burnTheSurroundings = false;
@@ -106,8 +113,12 @@ public class Wood implements Particle {
             }
         }
         else if ((now - lastFireUpdate) / 1_000_000_000.0 >= VANISH_TIME / FIRING_STEPS) {
-            for (int yIndex = minY; yIndex <= maxY && yIndex < ParticleHandler.yPositions; yIndex += 1) {
-                for (int xIndex = minX; xIndex <= maxX && xIndex < ParticleHandler.xPositions; xIndex += 1) {
+            for (int yIndex = minY; yIndex <= maxY; yIndex += 1) {
+                for (int xIndex = minX; xIndex <= maxX ; xIndex += 1) {
+
+                    if (!ParticleHandler.validPoint(xIndex, yIndex)) {
+                        continue;
+                    }
 
                     lastFireUpdate = now;
                     if (ParticleHandler.getType(xIndex, yIndex) != 0) {

@@ -7,11 +7,13 @@ public class Water implements Particle {
     private int x;
     private int y;
     private int type;
+    private int speed;
     private Color color;
 
     public Water(int x, int y) {
         this.x = x;
         this.y = y;
+        speed = Constants.PARTICLE_SPEED;
 
         type = Constants.WATER;
         color = Constants.TYPE_COLOR[type];
@@ -42,30 +44,78 @@ public class Water implements Particle {
     public void setColor(Color c) {
         color = c;
     }
+    private int findXDirection(int sign) {
+        int point = x;
+
+        for (int i = sign * speed; i * sign > 0; i += sign * -1) {
+            if (!ParticleHandler.validPoint(x + i, y)) {
+                continue;
+            }
+            int pointType = ParticleHandler.getType(x + i, y);
+            if (pointType == 0 && (x + i) * sign > point * sign) {
+                point = x + i;
+            }
+            else if (ParticleHandler.strongerThan(pointType, type)) {
+                point = x;
+            }
+        }
+
+        return point;
+    }
+    private int findYDirection(int sign) {
+        int point = y;
+        for (int i = sign * speed; i * sign > 0; i += sign * -1) {
+            if (!ParticleHandler.validPoint(x, y + i)) {
+                continue;
+            }
+            int pointType = ParticleHandler.getType(x, y + i);
+            if (pointType == 0 && (y + i) * sign > point * sign) {
+                point = y + i;
+            }
+            else if (ParticleHandler.strongerThan(pointType, type)) {
+                point = y;
+            }
+        }
+
+        return point;
+    }
+    private int findDirection(int coordinate, int sign) {
+        if (coordinate == Constants.X_COORDINATE) {
+            return findXDirection(sign);
+        }
+        else if (coordinate == Constants.Y_COORDINATE) {
+            return findYDirection(sign);
+        }
+        return 0;
+    }
     public void update() {
 
-        int bottom = y + 1;
+        int bottom = findDirection(Constants.Y_COORDINATE, 1);
         int[] directions = {x + 1, x - 1};
         int firstDirectionIndex = (int)(System.nanoTime() % 2);
         int secondDirectionIndex = 1 - firstDirectionIndex;
 
         int firstDirection = directions[firstDirectionIndex];
+        firstDirection = findDirection(Constants.X_COORDINATE, firstDirection - x);
         int secondDirection = directions[secondDirectionIndex];
+        secondDirection = findDirection(Constants.X_COORDINATE, secondDirection - x);
 
 
-        if (bottom < ParticleHandler.yPositions && ParticleHandler.getType(x, bottom) == 0) {
+        if (ParticleHandler.validPoint(x, bottom) && ParticleHandler.getType(x, bottom) == 0) {
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(x, bottom, this);
             setY(bottom);
         }
-        else if (firstDirection >= 0 && firstDirection < ParticleHandler.xPositions
+        else if (ParticleHandler.validPoint(firstDirection, y)
                 && ParticleHandler.getType(firstDirection, y) == 0) {
+
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(firstDirection, y, this);
             setX(firstDirection);
         }
-        else if (secondDirection >= 0 && secondDirection < ParticleHandler.xPositions
-                && ParticleHandler.getType(secondDirection, y) == 0) {
+        else if (ParticleHandler.validPoint(secondDirection, y) &&
+                ParticleHandler.getType(secondDirection, y) == 0) {
+
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(secondDirection, y, this);
             setX(secondDirection);
