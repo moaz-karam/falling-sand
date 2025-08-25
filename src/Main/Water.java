@@ -91,30 +91,24 @@ public class Water implements Particle {
     public void update() {
 
         int bottom = findDirection(Constants.Y_COORDINATE, 1);
-        int[] directions = {x + 1, x - 1};
-        int firstDirectionIndex = (int)(System.nanoTime() % 2);
-        int secondDirectionIndex = 1 - firstDirectionIndex;
+        int[] signs = {1, -1};
+        int firstDirectionSign = (int)(System.nanoTime() % 2);
+        int secondDirectionSign = 1 - firstDirectionSign;
 
-        int firstDirection = directions[firstDirectionIndex];
-        firstDirection = findDirection(Constants.X_COORDINATE, firstDirection - x);
-        int secondDirection = directions[secondDirectionIndex];
-        secondDirection = findDirection(Constants.X_COORDINATE, secondDirection - x);
+        int firstDirection = findDirection(Constants.X_COORDINATE, signs[firstDirectionSign]);
+        int secondDirection = findDirection(Constants.X_COORDINATE, signs[secondDirectionSign]);
 
-
-        if (ParticleHandler.validPoint(x, bottom) && ParticleHandler.getType(x, bottom) == 0) {
+        if (bottom - y >= 2) {
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(x, bottom, this);
             setY(bottom);
         }
-        else if (ParticleHandler.validPoint(firstDirection, y)
-                && ParticleHandler.getType(firstDirection, y) == 0) {
-
+        else if (firstDirection != x) {
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(firstDirection, y, this);
             setX(firstDirection);
         }
-        else if (ParticleHandler.validPoint(secondDirection, y) &&
-                ParticleHandler.getType(secondDirection, y) == 0) {
+        else if (secondDirection != x) {
 
             ParticleHandler.setParticle(x, y, null);
             ParticleHandler.setParticle(secondDirection, y, this);
