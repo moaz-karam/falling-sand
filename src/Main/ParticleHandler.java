@@ -164,6 +164,10 @@ public class ParticleHandler implements Runnable {
         for (Iterator<Particle> iter = particles.iterator(); iter.hasNext();) {
             Particle p = iter.next();
 
+            if (!validPoint(p.getX(), p.getY())) {
+                continue;
+            }
+
             if (getParticle(p.getX(), p.getY()) != p) {
                 iter.remove();
                 continue;
