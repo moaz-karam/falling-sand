@@ -1,6 +1,8 @@
 package Main;
 
 import java.awt.*;
+import java.util.Random;
+
 import DataStructures.*;
 
 public class Sand implements Particle {
@@ -66,57 +68,96 @@ public class Sand implements Particle {
         ParticleHandler.setParticle(newX, newY, waterParticle);
     }
     private void putSand(int xIndex, int yIndex) {
+        if (ParticleHandler.getType(xIndex, yIndex) == Constants.WATER) {
+            updateWater(xIndex, yIndex);
+            speed = Constants.PARTICLE_WATER_SPEED;
+        }
+        else {
+            speed = Constants.PARTICLE_SPEED;
+        }
         ParticleHandler.setParticle(xIndex, yIndex, this);
+    }
+    private int findX(int sign, int bottom) {
+        int point = x;
+
+        for (int i = sign; i * sign <= speed; i += sign) {
+
+            if (!ParticleHandler.validPoint(x + i, bottom)) {
+                break;
+            }
+
+            int pType = ParticleHandler.getType(x + i, bottom);
+
+
+            if (!ParticleHandler.strongerThan(pType, type)) {
+                if (pType != type) {
+                    point = x + i;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+
+        }
+
+        return point;
+    }
+    private int findY() {
+
+        int point = y;
+
+        for (int i = y + 1; i <= y + speed; i += 1) {
+
+            if (!ParticleHandler.validPoint(x, i)) {
+                break;
+            }
+
+            int pType = ParticleHandler.getType(x, i);
+
+            if (!ParticleHandler.strongerThan(pType, type) && pType != type) {
+                point = i;
+            }
+            else {
+                break;
+            }
+        }
+
+        return point;
     }
     public void update() {
 
-        int bottom = y + 1;
-        int right = x + 1;
-        int left = x - 1;
+        int bottom = findY();
+        int xDirect = x;
 
-        boolean checkRight = false;
-        boolean checkLeft = false;
+        if (bottom - y < speed / 2 && ParticleHandler.validPoint(x, y + speed)) {
 
-        int bottomRightType = -1;
-        int bottomLeftType = -1;
+            int[] signs = {1, -1};
 
-        if (!ParticleHandler.validPoint(x, bottom)) {
-            return;
-        }
-        if (ParticleHandler.validPoint(right, bottom) && ParticleHandler.getType(right, y) == 0) {
-            checkRight = true;
-            bottomRightType = ParticleHandler.getType(right, bottom);
-        }
-        if (ParticleHandler.validPoint(left, bottom) && ParticleHandler.getType(left, y) == 0) {
-            checkLeft = true;
-            bottomLeftType = ParticleHandler.getType(left, bottom);
-        }
+            Random random = new Random();
 
-        int bottomType = ParticleHandler.getType(x, bottom);
+            int firstSign = random.nextInt(0, 2);
+            int secondSign = 1 - firstSign;
 
-        if (bottomType != Constants.SAND) {
-            if (ParticleHandler.strongerThan(bottomType, type - 1)) {
-                return;
+            int firstDirect = findX(signs[firstSign], y + speed);
+            int secondDirect = findX(signs[secondSign], y + speed);
+
+            if (
+                    Math.abs(x - firstDirect) < Math.abs(x - secondDirect)
+                    && secondDirect != xDirect
+            ) {
+                xDirect = secondDirect;
+                bottom = y + speed;
             }
+            else
+                if (firstDirect != xDirect)
+                {
+                xDirect = firstDirect;
+                bottom = y + speed;
+            }
+        }
 
-            if (bottomType == Constants.WATER) {
-                updateWater(x, bottom);
-            }
-            putSand(x, bottom);
-        }
-        else if (checkRight && !ParticleHandler.strongerThan(bottomRightType, type - 1)) {
-            if (bottomRightType == Constants.WATER) {
-                updateWater(right, bottom);
-            }
-            putSand(right, bottom);
-
-        }
-        else if (checkLeft && !ParticleHandler.strongerThan(bottomLeftType, type - 1)) {
-            if (bottomLeftType == Constants.WATER) {
-                updateWater(left, bottom);
-            }
-            putSand(left, bottom);
-        }
+        putSand(xDirect, bottom);
     }
 
     public int getWaterAbsorbed() {

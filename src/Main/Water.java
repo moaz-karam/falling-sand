@@ -93,10 +93,9 @@ public class Water implements Particle {
         int secondDirection;
 
         ParticleHandler.setParticle(x, y, null);
-        if (bottom - y < 2) {
+        if (bottom - y < speed / 2) {
             firstDirection = findXDirection(signs[firstDirectionSign], bottom);
             secondDirection = findXDirection(signs[secondDirectionSign], bottom);
-            Random r = new Random();
             if (Math.abs(x - firstDirection) > Math.abs(x - secondDirection)) {
                 xVel = x - firstDirection;
             }
@@ -113,13 +112,10 @@ public class Water implements Particle {
         int newX = x - (int)xVel;
         if (ParticleHandler.getType(newX, bottom) == 0) {
             ParticleHandler.setParticle(newX, bottom, this);
-            setX(newX);
         }
         else {
             ParticleHandler.setParticle(x, bottom, this);
         }
-
-        setY(bottom);
 
         if (xVel != 0) {
             int sign = (int)(xVel / Math.abs(xVel));

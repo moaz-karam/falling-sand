@@ -169,6 +169,7 @@ public class ParticleHandler implements Runnable {
             }
 
             if (getParticle(p.getX(), p.getY()) != p) {
+                System.out.println("Particle of type " + p.getType() + " is removed");
                 iter.remove();
                 continue;
             }
