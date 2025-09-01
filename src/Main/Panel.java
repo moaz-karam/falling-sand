@@ -6,7 +6,6 @@ import java.util.Iterator;
 
 public class Panel extends JPanel {
 
-    private final JFrame frame;
     private final ParticleHandler ph;
     private final Mouse mouse;
     private final Keyboard keyboard;
@@ -28,7 +27,6 @@ public class Panel extends JPanel {
         setMinimumSize(size);
         setBackground(Color.DARK_GRAY);
         setVisible(true);
-        frame = new Frame(this);
 
         finishedDrawing = true;
         phThread = new Thread(ph);
@@ -37,24 +35,6 @@ public class Panel extends JPanel {
 
     public void paint(Graphics g) {
         super.paint(g);
-//        Particle[] particles = ph.getParticles();
-//
-//        for (int i = 0; i < particles.length; i += 1) {
-//
-//            Particle p = particles[i];
-//
-//            if (p == null) {
-//                continue;
-//            }
-//            if (p.getType() == Constants.SAND && !showSand) {
-//                continue;
-//            }
-//
-//            g.setColor(p.getColor());
-//
-//            g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
-//                    (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
-//        }
 
         for (Particle p : ph.getParticles()) {
 

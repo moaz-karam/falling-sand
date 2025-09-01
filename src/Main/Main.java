@@ -3,29 +3,17 @@ package Main;
 import java.awt.Toolkit;
 
 public class Main {
+    private final Menu menu;
     private final Panel panel;
+    private final Frame frame;
 
     public Main() {
+        menu = new Menu();
         panel = new Panel();
+        frame = new Frame(panel);
         panel.requestFocusInWindow();
     }
     public static void main(String[] args) {
         Main main = new Main();
     }
-//
-//    @Override
-//    public void run() {
-//
-//        double timerPerFrame = 1 / Constants.FRAMES_PER_SECOND;
-//        long lastFrameTime = System.nanoTime();
-//
-//        while (true) {
-//            long now = System.nanoTime();
-//            if ((now - lastFrameTime) / 1_000_000_000.0 >= timerPerFrame) {
-//                panel.update();
-//                Toolkit.getDefaultToolkit().sync();
-//                lastFrameTime = now;
-//            }
-//        }
-//    }
 }
