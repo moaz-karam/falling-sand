@@ -34,9 +34,6 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_R:
                 panel.selectRemove();
                 break;
-            case KeyEvent.VK_T:
-                panel.changeShowSandState();
-                break;
         }
     }
 

@@ -39,10 +39,6 @@ public class Panel extends JPanel {
         for (Particle p : ph.getParticles()) {
 
 
-            if (p.getType() == Constants.SAND && !showSand) {
-                continue;
-            }
-
             g.setColor(p.getColor());
 
             g.fillRect((int)(p.getX() * Constants.PARTICLE_WIDTH), (int)(p.getY() * Constants.PARTICLE_HEIGHT),
@@ -80,11 +76,4 @@ public class Panel extends JPanel {
     }
     public void selectFire() {ph.selectFire();}
     public void selectRemove() {ph.selectRemove();}
-    public void changeShowSandState() {
-        if (showSand) {
-            showSand = false;
-            return;
-        }
-        showSand = true;
-    }
 }
