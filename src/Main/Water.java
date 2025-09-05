@@ -34,6 +34,9 @@ public class Water implements Particle {
     public Color getColor() {
         return color;
     }
+    public int getSpeed() {
+        return speed;
+    }
 
     public void setX(int x) {
         this.x = x;

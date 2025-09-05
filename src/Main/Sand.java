@@ -159,7 +159,6 @@ public class Sand implements Particle {
 
         putSand(xDirect, bottom);
     }
-
     public int getWaterAbsorbed() {
         return waterAbsorbed;
     }

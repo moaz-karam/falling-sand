@@ -5,11 +5,12 @@ import Main.*;
 import java.util.Hashtable;
 
 public class AStar {
-    private Particle source;
+    private final Particle source;
     private int[] position;
     private boolean positionFound;
     private final Hashtable<Particle, Integer> distTo;
     private final MinHeap<Particle> heap;
+    private int edgeDistance;
 
 
     public AStar(Particle s) {
@@ -17,6 +18,7 @@ public class AStar {
         distTo = new Hashtable<>();
         positionFound = false;
         heap = new MinHeap<>();
+        edgeDistance = 1;
         findPosition();
     }
 
@@ -52,19 +54,18 @@ public class AStar {
         }
 
         if (!distTo.containsKey(edge)) {
-            distTo.put(edge, distTo.get(p) + 1);
+            distTo.put(edge, distTo.get(p) + edgeDistance);
             heap.add(edge, distTo.get(edge) + heuristic(edge));
         }
     }
 
     private void addEdges(Particle p) {
-
         int x = p.getX();
         int y = p.getY();
 
-        int up = y - 1;
-        int right = x + 1;
-        int left = x - 1;
+        int up = y - edgeDistance;
+        int right = x + edgeDistance;
+        int left = x - edgeDistance;
 
         if (!positionFound && validEdge(right, y)) {
             addEdgeHelper(p, right, y);
@@ -81,9 +82,15 @@ public class AStar {
         Particle current = source;
         distTo.put(current, 0);
         addEdges(current);
+        int edgeCounter = 0;
         while (!positionFound && heap.getSize() > 0) {
+            if (edgeCounter > Constants.PARTICLE_SPEED) {
+                edgeDistance *= 2;
+                edgeCounter = 0;
+            }
             current = heap.removeSmallest();
             addEdges(current);
+            edgeCounter += 1;
         }
     }
 

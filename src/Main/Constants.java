@@ -4,9 +4,9 @@ import java.awt.*;
 
 public class Constants {
 
-    public static final double PARTICLE_WIDTH = 3;
-    public static final double PARTICLE_HEIGHT = 3;
-    public static final int PARTICLE_SPEED = 5;
+    public static final double PARTICLE_WIDTH = 4;
+    public static final double PARTICLE_HEIGHT = 4;
+    public static final int PARTICLE_SPEED = 4;
     public static final int PARTICLE_WATER_SPEED = 1;
 
     public static final double MOUSE_WIDTH = PARTICLE_WIDTH * 4;

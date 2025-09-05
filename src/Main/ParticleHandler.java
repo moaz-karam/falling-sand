@@ -1,7 +1,7 @@
 package Main;
 
 import java.awt.*;
-import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -11,6 +11,7 @@ public class ParticleHandler implements Runnable {
     private static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
     private static final Particle[][] grid = new Particle[xPositions][yPositions];
     private final Stack<Particle> particles;
+    private static final Hashtable<Integer, Stack<Particle>> removed = new Hashtable<>();
 
     private boolean inserting;
 
@@ -26,6 +27,10 @@ public class ParticleHandler implements Runnable {
         particles = new Stack<>();
         inserting = false;
         selectedType = Constants.SAND;
+
+        removed.put(Constants.SAND, new Stack<>());
+        removed.put(Constants.WATER, new Stack<>());
+        removed.put(Constants.WOOD, new Stack<>());
     }
 
     public void startInserting() {
@@ -59,10 +64,21 @@ public class ParticleHandler implements Runnable {
     }
     public static void remove(Particle p) {
         if (p != null) {
+            if (removed.get(p.getType()).size() < 1000) {
+                removed.get(p.getType()).push(p);
+            }
             grid[p.getX()][p.getY()] = null;
         }
     }
     private Particle createParticle(int x, int y) {
+
+        if (!removed.get(selectedType).isEmpty()) {
+            Particle p = removed.get(selectedType).pop();
+            p.setX(x);
+            p.setY(y);
+            return p;
+        }
+
         switch (selectedType) {
             case Constants.SAND:
                 return new Sand(x, y);
@@ -87,7 +103,7 @@ public class ParticleHandler implements Runnable {
                 }
 
                 if (selectedType == Constants.REMOVE) {
-                    grid[x][y] = null;
+                    remove(grid[x][y]);
                 }
 
                 else if (selectedType == Constants.FIRE) {
@@ -169,7 +185,6 @@ public class ParticleHandler implements Runnable {
             }
 
             if (getParticle(p.getX(), p.getY()) != p) {
-                System.out.println("Particle of type " + p.getType() + " is removed");
                 iter.remove();
                 continue;
             }
