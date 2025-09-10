@@ -69,13 +69,20 @@ public class Sand implements Particle {
     }
     private void putSand(int xIndex, int yIndex) {
         if (ParticleHandler.getType(xIndex, yIndex) == Constants.WATER) {
-            updateWater(xIndex, yIndex);
+            Particle water = ParticleHandler.getParticle(xIndex, yIndex);
+
+            if (getWaterAbsorbed() < Sand.WATER_CAPACITY) {
+                absorbWater((Water)water);
+            }
+            else {
+                ParticleHandler.switchParticle(this, water);
+            }
             speed = Constants.PARTICLE_WATER_SPEED;
         }
         else {
+            ParticleHandler.setParticle(xIndex, yIndex, this);
             speed = Constants.PARTICLE_SPEED;
         }
-        ParticleHandler.setParticle(xIndex, yIndex, this);
     }
     private int findX(int sign, int bottom) {
         int point = x;

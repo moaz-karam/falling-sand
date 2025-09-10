@@ -162,6 +162,18 @@ public class ParticleHandler implements Runnable {
         p.setX(x);
         p.setY(y);
     }
+    public static void switchParticle(Particle p1, Particle p2) {
+        int tempX = p1.getX();
+        int tempY = p1.getY();
+
+        p1.setX(p2.getX());
+        p1.setY(p2.getY());
+        grid[p2.getX()][p2.getY()] = p1;
+
+        p2.setX(tempX);
+        p2.setY(tempY);
+        grid[tempX][tempY] = p2;
+    }
     public static boolean strongerThan(int t1, int t2) {
         return t1 > t2;
     }
