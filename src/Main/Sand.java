@@ -84,22 +84,31 @@ public class Sand implements Particle {
             speed = Constants.PARTICLE_SPEED;
         }
     }
-    private int findX(int sign, int bottom) {
-        int point = x;
+    private int[] findDiagonal(int startingY, int yDiff) {
 
-        for (int i = sign; i * sign <= speed; i += sign) {
+        int bottomY = startingY;
+        int bottomX = this.x;
 
-            if (!ParticleHandler.validPoint(x + i, bottom)) {
+        int rightX = this.x;
+        int leftX = this.x;
+
+        int rightY = startingY;
+        int leftY = startingY;
+
+        for (int i = 1; i <= yDiff; i += 1) {
+
+            int left = x - i;
+            int tempY = startingY + i;
+
+            if (!ParticleHandler.validPoint(left, tempY)) {
                 break;
             }
-
-            int pType = ParticleHandler.getType(x + i, bottom);
-
+            int pType = ParticleHandler.getType(left, tempY);
 
             if (!ParticleHandler.strongerThan(pType, type)) {
-                if (pType != type) {
-                    point = x + i;
-                    break;
+                if (pType != Constants.SAND) {
+                    leftX = left;
+                    leftY = tempY;
                 }
             }
             else {
@@ -107,64 +116,67 @@ public class Sand implements Particle {
             }
 
         }
+        for (int i = 1; i <= yDiff; i += 1) {
 
-        return point;
-    }
-    private int findY() {
+            int right = x + i;
+            int tempY = startingY + i;
 
-        int point = y;
-
-        for (int i = y + 1; i <= y + speed; i += 1) {
-
-            if (!ParticleHandler.validPoint(x, i)) {
+            if (!ParticleHandler.validPoint(right, tempY)) {
                 break;
             }
+            int pType = ParticleHandler.getType(right, tempY);
 
-            int pType = ParticleHandler.getType(x, i);
-
-            if (!ParticleHandler.strongerThan(pType, type) && pType != type) {
-                point = i;
+            if (!ParticleHandler.strongerThan(pType, type)) {
+                if (pType != Constants.SAND) {
+                    rightY = tempY;
+                    rightX = right;
+                }
             }
             else {
                 break;
             }
         }
 
-        return point;
-    }
-    public void update() {
-
-        int bottom = findY();
-        int xDirect = x;
-
-        if (bottom - y < speed / 2 && ParticleHandler.validPoint(x, y + speed)) {
-
-            int[] signs = {1, -1};
-
-            Random random = new Random();
-
-            int firstSign = random.nextInt(0, 2);
-            int secondSign = 1 - firstSign;
-
-            int firstDirect = findX(signs[firstSign], y + speed);
-            int secondDirect = findX(signs[secondSign], y + speed);
-
-            if (
-                    Math.abs(x - firstDirect) < Math.abs(x - secondDirect)
-                    && secondDirect != xDirect
-            ) {
-                xDirect = secondDirect;
-                bottom = y + speed;
-            }
-            else
-                if (firstDirect != xDirect)
-                {
-                xDirect = firstDirect;
-                bottom = y + speed;
-            }
+        if (bottomX - leftX > rightX - bottomX) {
+            bottomX = leftX;
+            bottomY = leftY;
+        }
+        else {
+            bottomX = rightX;
+            bottomY = rightY;
         }
 
-        putSand(xDirect, bottom);
+        return new int[] {bottomX, bottomY};
+    }
+    private int[] findPoint() {
+        // find the bottom first
+        int bottomX = this.x;
+        int bottomY = this.y;
+        for (int i = 1; i <= speed; i += 1) {
+
+            if (!ParticleHandler.validPoint(x, y +i)) {
+                break;
+            }
+            int pType = ParticleHandler.getType(x, y + i);
+            if (!ParticleHandler.strongerThan(pType, type)) {
+                if (pType != Constants.SAND) {
+                    bottomY = y + i;
+                }
+            }
+            else {
+                break;
+            }
+        }
+        if (bottomY - y < speed) {
+            int[] temp = findDiagonal(bottomY, speed - (bottomY - y));
+            bottomX = temp[0];
+            bottomY = temp[1];
+        }
+        return new int[] {bottomX, bottomY};
+    }
+    public void update() {
+        int[] temp = findPoint();
+        putSand(temp[0], temp[1]);
     }
     public int getWaterAbsorbed() {
         return waterAbsorbed;

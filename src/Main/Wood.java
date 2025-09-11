@@ -37,9 +37,6 @@ public class Wood implements Particle {
     public Color getColor() {
         return color;
     }
-    public int getSpeed() {
-        return 0;
-    }
 
     public void setX(int x) {
         this.x = x;

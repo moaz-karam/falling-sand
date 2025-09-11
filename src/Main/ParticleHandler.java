@@ -11,8 +11,6 @@ public class ParticleHandler implements Runnable {
     private static final int yPositions = (int)(Constants.SCREEN_HEIGHT / Constants.PARTICLE_HEIGHT);
     private static final Particle[][] grid = new Particle[xPositions][yPositions];
     private final Stack<Particle> particles;
-    private static final Hashtable<Integer, Stack<Particle>> removed = new Hashtable<>();
-
     private boolean inserting;
 
     private int selectedType;
@@ -28,9 +26,6 @@ public class ParticleHandler implements Runnable {
         inserting = false;
         selectedType = Constants.SAND;
 
-        removed.put(Constants.SAND, new Stack<>());
-        removed.put(Constants.WATER, new Stack<>());
-        removed.put(Constants.WOOD, new Stack<>());
     }
 
     public void startInserting() {
@@ -64,20 +59,10 @@ public class ParticleHandler implements Runnable {
     }
     public static void remove(Particle p) {
         if (p != null) {
-            if (removed.get(p.getType()).size() < 1000) {
-                removed.get(p.getType()).push(p);
-            }
             grid[p.getX()][p.getY()] = null;
         }
     }
     private Particle createParticle(int x, int y) {
-
-        if (!removed.get(selectedType).isEmpty()) {
-            Particle p = removed.get(selectedType).pop();
-            p.setX(x);
-            p.setY(y);
-            return p;
-        }
 
         switch (selectedType) {
             case Constants.SAND:
@@ -94,10 +79,13 @@ public class ParticleHandler implements Runnable {
         int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
 
+        if (selectedType < Constants.WOOD) {
+            yIndex -= Constants.PARTICLE_SPEED;
+        }
 
-        for (int y = yIndex - 4; y < yIndex + 4; y += 1) {
+        for (int y = yIndex - 2; y < yIndex + 2; y += 1) {
 
-            for (int x = xIndex + 4; x >= xIndex - 4; x -= 1) {
+            for (int x = xIndex + 2; x >= xIndex - 2; x -= 1) {
                 if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
                     continue;
                 }
@@ -202,6 +190,13 @@ public class ParticleHandler implements Runnable {
             }
             p.update();
         }
+//
+//
+//        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
+//        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+//
+//        System.out.println(getType(xIndex, yIndex));
+
         panel.finishedDrawing = false;
         panel.repaint();
     }
