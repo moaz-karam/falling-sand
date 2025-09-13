@@ -143,8 +143,7 @@ public class Wood implements Particle {
         burnTheSurroundings = true;
     }
     private void putOffFire() {
-        color = Constants.TYPE_COLOR[Constants.WOOD];
-        color = color.darker();
+        color = Color.black;
         onFire = false;
     }
 }

@@ -1,7 +1,6 @@
 package Main;
 
 import java.awt.*;
-import java.util.Random;
 
 public class Water implements Particle {
 
