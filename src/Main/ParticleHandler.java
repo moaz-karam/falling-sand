@@ -74,22 +74,20 @@ public class ParticleHandler implements Runnable {
         }
         return null;
     }
-    private void insert() {
 
-        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
-        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+    private void insertCircular(int xIndex, int yIndex) {
+        int radius = 20;
 
-        if (selectedType < Constants.WOOD) {
-            yIndex -= Constants.PARTICLE_SPEED;
-        }
+        for (int i = 1; i <= radius; i += 1) {
 
-        for (int y = yIndex - 2; y < yIndex + 2; y += 1) {
+            for (int j = 0; j < 360; j += 5) {
 
-            for (int x = xIndex + 2; x >= xIndex - 2; x -= 1) {
-                if (x < 0 || y < 0 || x >= xPositions || y >= yPositions) {
+                int x = xIndex + (int)(Math.cos(j) * i);
+                int y = yIndex + (int)(Math.sin(j) * i);
+
+                if (!ParticleHandler.validPoint(x, y)) {
                     continue;
                 }
-
                 if (selectedType == Constants.REMOVE) {
                     remove(grid[x][y]);
                 }
@@ -106,31 +104,16 @@ public class ParticleHandler implements Runnable {
                     particles.push(insertedParticle);
                 }
             }
+
         }
 
+    }
+    private void insert() {
 
-//        if (xIndex < 0 || yIndex < 0 || xIndex >= xPositions || yIndex >= yPositions) {
-//            return;
-//        }
-//
-//
-//        if (selectedType == Constants.REMOVE) {
-//            if (grid[xIndex][yIndex] != null) {
-//                remove(grid[xIndex][yIndex]);
-//            }
-//        }
-//
-//        else if (selectedType == Constants.FIRE) {
-//            if (getType(xIndex, yIndex) == Constants.WOOD) {
-//                Wood wood = (Wood)grid[xIndex][yIndex];
-//                wood.setOnFire();
-//            }
-//        }
-//        else if (grid[xIndex][yIndex] == null) {
-//            Particle insertedParticle = createParticle(xIndex, yIndex);
-//            grid[xIndex][yIndex] = insertedParticle;
-//            particles.push(insertedParticle);
-//        }
+        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
+        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+
+        insertCircular(xIndex, yIndex);
     }
     public static int getType(int x, int y) {
         if (grid[x][y] == null) {
