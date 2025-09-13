@@ -50,33 +50,40 @@ public class Water implements Particle {
     private int findXDirection(int sign, int yIndex) {
         int point = x;
 
-        for (int i = sign * speed; i * sign > 0; i += sign * -1) {
-            if (!ParticleHandler.validPoint(x + i, yIndex)) {
+        for (int i = 1; i <= speed; i += 1) {
+            if (!ParticleHandler.validPoint(x + i * sign, yIndex)) {
+                break;
+            }
+            int pType = ParticleHandler.getType(x + i * sign, yIndex);
+            if (pType == type) {
                 continue;
             }
-            int pointType = ParticleHandler.getType(x + i, yIndex);
-            if (pointType == 0 && (x + i) * sign > point * sign) {
-                point = x + i;
+            else if (pType < type) {
+                point = x + i * sign;
             }
-            else if (ParticleHandler.strongerThan(pointType, type)) {
-                point = x;
+            else {
+                break;
             }
         }
 
         return point;
     }
-    private int findYDirection(int sign) {
+    private int findYDirection() {
         int point = y;
-        for (int i = sign * speed; i * sign > 0; i += sign * -1) {
+
+        for (int i = 1; i <= speed; i += 1) {
             if (!ParticleHandler.validPoint(x, y + i)) {
+                break;
+            }
+            int pType = ParticleHandler.getType(x, y + i);
+            if (pType == type) {
                 continue;
             }
-            int pointType = ParticleHandler.getType(x, y + i);
-            if (pointType == 0 && (y + i) * sign > point * sign) {
+            else if (pType < type) {
                 point = y + i;
             }
-            else if (ParticleHandler.strongerThan(pointType, type)) {
-                point = y;
+            else {
+                break;
             }
         }
 
@@ -84,7 +91,7 @@ public class Water implements Particle {
     }
     public void update() {
 
-        int bottom = findYDirection(1);
+        int bottom = findYDirection();
         int[] signs = {1, -1};
         int firstDirectionSign = (int)(System.nanoTime() % 2);
         int secondDirectionSign = 1 - firstDirectionSign;
