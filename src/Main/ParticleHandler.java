@@ -190,12 +190,6 @@ public class ParticleHandler implements Runnable {
             }
             p.update();
         }
-//
-//
-//        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
-//        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
-//
-//        System.out.println(getType(xIndex, yIndex));
 
         panel.finishedDrawing = false;
         panel.repaint();
