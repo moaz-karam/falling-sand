@@ -18,6 +18,11 @@ public class ParticleHandler implements Runnable {
     private static double mouseX;
     private static double mouseY;
 
+    private static double prevMouseX;
+    private static double prevMouseY;
+
+    private double insertionRadius;
+
     private final Panel panel;
 
     public ParticleHandler(Panel panel) {
@@ -25,7 +30,9 @@ public class ParticleHandler implements Runnable {
         particles = new Stack<>();
         inserting = false;
         selectedType = Constants.SAND;
-
+        insertionRadius = 10;
+        prevMouseX = -1;
+        prevMouseY = -1;
     }
 
     public void startInserting() {
@@ -33,6 +40,8 @@ public class ParticleHandler implements Runnable {
     }
     public void stopInserting() {
         inserting = false;
+        prevMouseX = -1;
+        prevMouseY = -1;
     }
     public void selectSand() {
         selectedType = Constants.SAND;
@@ -76,9 +85,8 @@ public class ParticleHandler implements Runnable {
     }
 
     private void insertCircular(int xIndex, int yIndex) {
-        int radius = 20;
 
-        for (int i = 1; i <= radius; i += 1) {
+        for (int i = 1; i <= insertionRadius; i += 1) {
 
             for (int j = 0; j < 360; j += 5) {
 
@@ -106,12 +114,38 @@ public class ParticleHandler implements Runnable {
             }
 
         }
-
+        prevMouseX = mouseX;
+        prevMouseY = mouseY;
     }
     private void insert() {
 
         int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
         int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
+
+        if (prevMouseX < 0) {
+            insertCircular(xIndex, yIndex);
+            return;
+        }
+
+        double xDiff = mouseX - prevMouseX;
+        double yDiff = mouseY - prevMouseY;
+        double insertionDiff = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+
+        int numberOfInsertions = (int)(insertionDiff / (insertionRadius * 2));
+
+        double cos = 0;
+        double sin = 0;
+
+        if (numberOfInsertions > 0) {
+            cos = xDiff / insertionDiff;
+            sin = yDiff / insertionDiff;
+        }
+
+        for (int i = 1; i < numberOfInsertions; i += 1) {
+            int gapX = (int)(xIndex - cos * i * insertionRadius);
+            int gapY = (int)(yIndex - sin * i * insertionRadius);
+            insertCircular(gapX, gapY);
+        }
 
         insertCircular(xIndex, yIndex);
     }
