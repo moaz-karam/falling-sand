@@ -136,6 +136,9 @@ public class Wood implements Particle {
         return onFire;
     }
     public void setOnFire() {
+        if (onFire) {
+            return;
+        }
         firingTime = System.nanoTime();
         lastFireUpdate = System.nanoTime();
         color = Constants.TYPE_COLOR[Constants.FIRE];
