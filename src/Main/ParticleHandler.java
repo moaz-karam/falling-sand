@@ -30,7 +30,7 @@ public class ParticleHandler implements Runnable {
         particles = new Stack<>();
         inserting = false;
         selectedType = Constants.SAND;
-        insertionRadius = 10;
+        insertionRadius = 5;
         prevMouseX = -1;
         prevMouseY = -1;
     }
@@ -114,8 +114,10 @@ public class ParticleHandler implements Runnable {
             }
 
         }
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
+        if (prevMouseX < 0 && prevMouseY < 0) {
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+        }
     }
     private void insert() {
 
@@ -131,22 +133,23 @@ public class ParticleHandler implements Runnable {
         double yDiff = mouseY - prevMouseY;
         double insertionDiff = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
 
-        int numberOfInsertions = (int)(insertionDiff / (insertionRadius * 2));
+        while (insertionDiff > insertionRadius / 2) {
 
-        double cos = 0;
-        double sin = 0;
+            double cos = xDiff / insertionDiff;
+            double sin = yDiff / insertionDiff;
 
-        if (numberOfInsertions > 0) {
-            cos = xDiff / insertionDiff;
-            sin = yDiff / insertionDiff;
-        }
+            prevMouseX += cos * insertionRadius * 0.25;
+            prevMouseY += sin * insertionRadius * 0.25;
 
-        for (int i = 1; i < numberOfInsertions; i += 1) {
-            int gapX = (int)(xIndex - cos * i * insertionRadius);
-            int gapY = (int)(yIndex - sin * i * insertionRadius);
+            int gapX = (int)(Math.floor(prevMouseX / Constants.PARTICLE_WIDTH));
+            int gapY = (int)(Math.floor(prevMouseY / Constants.PARTICLE_HEIGHT));
+
             insertCircular(gapX, gapY);
-        }
 
+            xDiff = mouseX - prevMouseX;
+            yDiff = mouseY - prevMouseY;
+            insertionDiff = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+        }
         insertCircular(xIndex, yIndex);
     }
     public static int getType(int x, int y) {
