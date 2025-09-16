@@ -35,6 +35,11 @@ public class ParticleHandler implements Runnable {
         prevMouseY = -1;
     }
 
+    public void addToRadius(double i) {
+        if (insertionRadius + i >= 0) {
+            insertionRadius += i;
+        }
+    }
     public void startInserting() {
         inserting = true;
     }
@@ -102,7 +107,7 @@ public class ParticleHandler implements Runnable {
 
         for (int i = 1; i <= insertionRadius; i += 1) {
 
-            for (int j = 0; j < 360; j += 1) {
+            for (double j = 0; j < 360; j += 1) {
 
                 int x = (int)(mX + Math.cos(j) * i);
                 int y = (int)(mY + Math.sin(j) * i);
@@ -248,7 +253,7 @@ public class ParticleHandler implements Runnable {
         Stack<Point> circlePoints = new Stack<>();
 
 
-        for (int i = 0; i < 360; i += 1) {
+        for (double i = 0; i < 360; i += 1) {
             double x = mouseX + Math.cos(i) * insertionRadius;
             double y = mouseY + Math.sin(i) * insertionRadius;
 

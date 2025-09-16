@@ -22,6 +22,7 @@ public class Panel extends JPanel {
         Dimension size = new Dimension((int)Constants.SCREEN_WIDTH, (int)Constants.SCREEN_HEIGHT);
         addMouseMotionListener(mouse);
         addMouseListener(mouse);
+        addMouseWheelListener(mouse);
         addKeyListener(keyboard);
         setMinimumSize(size);
         setPreferredSize(size);
@@ -107,5 +108,8 @@ public class Panel extends JPanel {
             return;
         }
         showSand = true;
+    }
+    public void addToRadius(double i) {
+        ph.addToRadius(i);
     }
 }

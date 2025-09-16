@@ -3,8 +3,10 @@ package Main;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelListener;
+import java.awt.event.MouseWheelEvent;
 
-public class Mouse implements MouseMotionListener, MouseListener {
+public class Mouse implements MouseMotionListener, MouseListener, MouseWheelListener {
 
     private final Panel panel;
 
@@ -39,4 +41,8 @@ public class Mouse implements MouseMotionListener, MouseListener {
         panel.setMousePosition(e.getX(), e.getY());
     }
 
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        double one = (double) e.getUnitsToScroll() / e.getScrollAmount();
+        panel.addToRadius(e.getUnitsToScroll() * -1);
+    }
 }
