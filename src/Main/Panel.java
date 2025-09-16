@@ -71,8 +71,9 @@ public class Panel extends JPanel {
         }
 
         g.setColor(Constants.TYPE_COLOR[ph.getSelectedType()]);
-        g.fillRect(ParticleHandler.getMouseX(), ParticleHandler.getMouseY(),
-                (int)Constants.PARTICLE_WIDTH, (int)Constants.PARTICLE_HEIGHT);
+        for (Point p : ph.getCircle()) {
+            g.fillRect((int)p.getX(), (int)p.getY(), 1, 1);
+        }
         finishedDrawing = true;
     }
 

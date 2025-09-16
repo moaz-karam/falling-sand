@@ -30,7 +30,7 @@ public class ParticleHandler implements Runnable {
         particles = new Stack<>();
         inserting = false;
         selectedType = Constants.SAND;
-        insertionRadius = 5;
+        insertionRadius = 20;
         prevMouseX = -1;
         prevMouseY = -1;
     }
@@ -45,15 +45,29 @@ public class ParticleHandler implements Runnable {
     }
     public void selectSand() {
         selectedType = Constants.SAND;
+        prevMouseX = -1;
+        prevMouseY = -1;
     }
     public void selectWater() {
         selectedType = Constants.WATER;
+        prevMouseX = -1;
+        prevMouseY = -1;
     }
     public void selectWood() {
         selectedType = Constants.WOOD;
+        prevMouseX = -1;
+        prevMouseY = -1;
     }
-    public void selectFire() {selectedType = Constants.FIRE;}
-    public void selectRemove() {selectedType = Constants.REMOVE;}
+    public void selectFire() {
+        selectedType = Constants.FIRE;
+        prevMouseX = -1;
+        prevMouseY = -1;
+    }
+    public void selectRemove() {
+        selectedType = Constants.REMOVE;
+        prevMouseX = -1;
+        prevMouseY = -1;
+    }
     public void setMousePosition(double x, double y) {
         mouseX = x;
         mouseY = y;
@@ -84,14 +98,17 @@ public class ParticleHandler implements Runnable {
         return null;
     }
 
-    private void insertCircular(int xIndex, int yIndex) {
+    private void insertCircular(double mX, double mY) {
 
         for (int i = 1; i <= insertionRadius; i += 1) {
 
-            for (int j = 0; j < 360; j += 5) {
+            for (int j = 0; j < 360; j += 1) {
 
-                int x = xIndex + (int)(Math.cos(j) * i);
-                int y = yIndex + (int)(Math.sin(j) * i);
+                int x = (int)(mX + Math.cos(j) * i);
+                int y = (int)(mY + Math.sin(j) * i);
+
+                x = (int)(x / Constants.PARTICLE_WIDTH);
+                y = (int)(y / Constants.PARTICLE_HEIGHT);
 
                 if (!ParticleHandler.validPoint(x, y)) {
                     continue;
@@ -121,11 +138,8 @@ public class ParticleHandler implements Runnable {
     }
     private void insert() {
 
-        int xIndex = (int)(Math.floor(mouseX / Constants.PARTICLE_WIDTH));
-        int yIndex = (int)(Math.floor(mouseY / Constants.PARTICLE_HEIGHT));
-
         if (prevMouseX < 0) {
-            insertCircular(xIndex, yIndex);
+            insertCircular(mouseX, mouseY);
             return;
         }
 
@@ -141,16 +155,13 @@ public class ParticleHandler implements Runnable {
             prevMouseX += cos * insertionRadius * 0.25;
             prevMouseY += sin * insertionRadius * 0.25;
 
-            int gapX = (int)(Math.floor(prevMouseX / Constants.PARTICLE_WIDTH));
-            int gapY = (int)(Math.floor(prevMouseY / Constants.PARTICLE_HEIGHT));
-
-            insertCircular(gapX, gapY);
+            insertCircular(prevMouseX, prevMouseY);
 
             xDiff = mouseX - prevMouseX;
             yDiff = mouseY - prevMouseY;
             insertionDiff = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
         }
-        insertCircular(xIndex, yIndex);
+        insertCircular(mouseX, mouseY);
     }
     public static int getType(int x, int y) {
         if (grid[x][y] == null) {
@@ -232,6 +243,18 @@ public class ParticleHandler implements Runnable {
 //        Particle[] returnedArray = new Particle[particles.size()];
 //        particles.toArray(returnedArray);
         return particles;
+    }
+    public Stack<Point> getCircle() {
+        Stack<Point> circlePoints = new Stack<>();
+
+
+        for (int i = 0; i < 360; i += 1) {
+            double x = mouseX + Math.cos(i) * insertionRadius;
+            double y = mouseY + Math.sin(i) * insertionRadius;
+
+            circlePoints.push(new Point((int)x, (int)y));
+        }
+        return circlePoints;
     }
     public int getSelectedType() {
         return selectedType;

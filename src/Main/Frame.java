@@ -40,9 +40,9 @@ public class Frame extends JFrame {
             setVisible(true); // Show in windowed mode if full-screen is not supported
         }
 
-        BufferedImage cursorImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-        Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(
-                cursorImage, new Point(0, 0), "blank cursor");
-        getContentPane().setCursor(cursor);
+//        BufferedImage cursorImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+//        Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(
+//                cursorImage, new Point(0, 0), "blank cursor");
+//        getContentPane().setCursor(cursor);
     }
 }
