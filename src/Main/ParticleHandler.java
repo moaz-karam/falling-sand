@@ -1,7 +1,6 @@
 package Main;
 
 import java.awt.*;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Stack;
 
@@ -206,29 +205,22 @@ public class ParticleHandler implements Runnable {
     }
 
     public void update() {
-        if (!panel.finishedDrawing) {
-            return;
-        }
         if (inserting) {
             insert();
         }
 
-        for (Iterator<Particle> iter = particles.iterator(); iter.hasNext();) {
-            Particle p = iter.next();
-
+        for (int i = 0; i < particles.size(); i += 1) {
+            Particle p = particles.get(i);
             if (!validPoint(p.getX(), p.getY())) {
                 continue;
             }
 
             if (getParticle(p.getX(), p.getY()) != p) {
-                iter.remove();
+                particles.remove(p);
                 continue;
             }
             p.update();
         }
-
-        panel.finishedDrawing = false;
-        panel.repaint();
     }
 
     public void run() {
@@ -245,8 +237,6 @@ public class ParticleHandler implements Runnable {
     }
 
     public Stack<Particle> getParticles() {
-//        Particle[] returnedArray = new Particle[particles.size()];
-//        particles.toArray(returnedArray);
         return particles;
     }
     public Stack<Point> getCircle() {
