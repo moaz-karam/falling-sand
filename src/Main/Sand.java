@@ -96,7 +96,7 @@ public class Sand implements Particle {
         int leftY = startingY;
 
         Random random = new Random();
-        yDiff = random.nextInt(1, yDiff + 1);
+        yDiff = random.nextInt(yDiff + 1) + 1;
 
         for (int i = 1; i <= yDiff; i += 1) {
 
